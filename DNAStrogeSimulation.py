@@ -82,7 +82,7 @@ def map_RDF_str_to_Id(str_item, sd_cnt, dict_mid_address, dict_strands):
 
 
 # function for getting a range to index POS table corresponding to a predicate ID
-def getRangeUsingBitmapP(pred_id, dict_mid_address, dict_strands):
+def get_range_using_bitmap_P(pred_id, dict_mid_address, dict_strands):
     is_found = False
     sd_addr = dict_mid_address["bitmap_pos"]
     while is_found is False and sd_addr != 0:
@@ -103,7 +103,7 @@ def getRangeUsingBitmapP(pred_id, dict_mid_address, dict_strands):
 
 
 # function for getting a range to index POS table corresponding to a subject ID
-def getRangeUsingBitmapS(subj_id, dict_mid_address, dict_strands):
+def get_range_using_bitmap_S(subj_id, dict_mid_address, dict_strands):
     is_found = False
     sd_addr = dict_mid_address["bitmap_spo"]
     while is_found is False and sd_addr != 0:
@@ -124,7 +124,7 @@ def getRangeUsingBitmapS(subj_id, dict_mid_address, dict_strands):
 
 
 # function for getting a range to index OSP table corresponding to a object ID
-def getRangeUsingBitmapO(obj_id, dict_mid_address, dict_strands):
+def get_range_using_bitmap_O(obj_id, dict_mid_address, dict_strands):
     is_found = False
     sd_addr = dict_mid_address["bitmap_osp"]
     while is_found is False and sd_addr != 0:
@@ -144,7 +144,7 @@ def getRangeUsingBitmapO(obj_id, dict_mid_address, dict_strands):
     return st_idx, ed_idx
 
 
-def getStrandRange(st_idx, ed_idx, num_per_srd, ctr):
+def get_strand_range(st_idx, ed_idx, num_per_srd, ctr):
     if ctr == 1:
         if math.ceil(st_idx / num_per_srd) == math.ceil(st_idx / num_per_srd):
             return st_idx, ed_idx
@@ -159,7 +159,7 @@ def getStrandRange(st_idx, ed_idx, num_per_srd, ctr):
             return 1, ed_idx % num_per_srd
 
 
-def getMatchingSubjectIds(pl_data, st_idx, ed_idx, id):
+def get_matching_Ids(pl_data, st_idx, ed_idx, id):
     temp_list = []
     for i, (obj_id, subj_id) in enumerate(pl_data):
         if obj_id == id and (st_idx <= (i+1) <= ed_idx):
@@ -168,7 +168,7 @@ def getMatchingSubjectIds(pl_data, st_idx, ed_idx, id):
 
 
 # function for getting a list of IDs using a range of values to index POS table
-def getIDsUsingLookupPOS(st_idx, ed_idx,
+def get_ids_using_lookup_POS(st_idx, ed_idx,
                          obj_id, dict_mid_addr, dict_strands, num_per_strand):
     std_len = num_per_strand
     ctr = 1
@@ -177,7 +177,7 @@ def getIDsUsingLookupPOS(st_idx, ed_idx,
     sd_addr = dict_mid_addr["index_pos"]
     while ctr < do_loop:
         is_found = False
-        st_idx_n, ed_idx_n = getStrandRange(st_idx, ed_idx, std_len, ctr)
+        st_idx_n, ed_idx_n = get_strand_range(st_idx, ed_idx, std_len, ctr)
         while is_found is False and sd_addr != 0:
             sd_data = dict_strands[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
@@ -189,7 +189,7 @@ def getIDsUsingLookupPOS(st_idx, ed_idx,
                 ctr = ctr + 1
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
-                temp_list = getMatchingSubjectIds(pl_data, st_idx_n, ed_idx_n, obj_id)
+                temp_list = get_matching_Ids(pl_data, st_idx_n, ed_idx_n, obj_id)
                 ls_sub_ids.extend(temp_list)
                 temp_list.clear()
             else:
@@ -198,7 +198,7 @@ def getIDsUsingLookupPOS(st_idx, ed_idx,
 
 
 # function for getting a list of IDs using a range of values to index SPO table
-def getIDsUsingLookupSPO(st_idx, ed_idx, pred_id, dict_mid_addr,
+def get_ids_using_lookup_SPO(st_idx, ed_idx, pred_id, dict_mid_addr,
                          dict_strands, num_per_strand):
     std_len = num_per_strand
     ctr = 1
@@ -207,7 +207,7 @@ def getIDsUsingLookupSPO(st_idx, ed_idx, pred_id, dict_mid_addr,
     sd_addr = dict_mid_addr["index_spo"]
     while ctr < do_loop:
         is_found = False
-        st_idx_n, ed_idx_n = getStrandRange(st_idx, ed_idx, std_len, ctr)
+        st_idx_n, ed_idx_n = get_strand_range(st_idx, ed_idx, std_len, ctr)
         while is_found is False and sd_addr != 0:
             sd_data = dict_strands[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
@@ -221,7 +221,7 @@ def getIDsUsingLookupSPO(st_idx, ed_idx, pred_id, dict_mid_addr,
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
                 print("asad", st_idx_n, ed_idx_n, prv_start)
-                temp_list = getMatchingSubjectIds(pl_data, st_idx_n, ed_idx_n, pred_id)
+                temp_list = get_matching_Ids(pl_data, st_idx_n, ed_idx_n, pred_id)
                 ls_obj_ids.extend(temp_list)
                 temp_list.clear()
             else:
@@ -230,7 +230,7 @@ def getIDsUsingLookupSPO(st_idx, ed_idx, pred_id, dict_mid_addr,
 
 
 # function for getting a list of IDs using a range of values to index OSP table
-def getIDsUsingLookupOSP(st_idx, ed_idx, subj_id, dict_mid_addr,
+def get_ids_using_lookup_OSP(st_idx, ed_idx, subj_id, dict_mid_addr,
                          dict_strands, num_per_strand):
     std_len = num_per_strand
     ctr = 1
@@ -239,7 +239,7 @@ def getIDsUsingLookupOSP(st_idx, ed_idx, subj_id, dict_mid_addr,
     sd_addr = dict_mid_addr["index_osp"]
     while ctr < do_loop:
         is_found = False
-        st_idx_n, ed_idx_n = getStrandRange(st_idx, ed_idx, std_len, ctr)
+        st_idx_n, ed_idx_n = get_strand_range(st_idx, ed_idx, std_len, ctr)
         while is_found is False and sd_addr != 0:
             sd_data = dict_strands[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
@@ -251,7 +251,7 @@ def getIDsUsingLookupOSP(st_idx, ed_idx, subj_id, dict_mid_addr,
                 ctr = ctr + 1
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
-                temp_list = getMatchingSubjectIds(
+                temp_list = get_matching_Ids(
                     pl_data, st_idx_n, ed_idx_n, subj_id)
                 ls_pred_ids.extend(temp_list)
                 temp_list.clear()
@@ -537,8 +537,8 @@ if __name__ == '__main__':
                                dict_strands_count, dict_of_mid_address, dict_of_strands)
     print("Object=Spanish team id:", obj_id)
 
-    s_idx, e_idx = getRangeUsingBitmapP(pre_id, dict_of_mid_address, dict_of_strands)
+    s_idx, e_idx = get_range_using_bitmap_P(pre_id, dict_of_mid_address, dict_of_strands)
 
-    subj_ids = getIDsUsingLookupPOS(s_idx, e_idx, obj_id,
+    subj_ids = get_ids_using_lookup_POS(s_idx, e_idx, obj_id,
                                     dict_of_mid_address, dict_of_strands, pair_per_strand)
     print("Subject id(s):", subj_ids)
