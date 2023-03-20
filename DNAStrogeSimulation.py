@@ -1,11 +1,13 @@
 import re
 import math
+from typing import Dict, Any
+
 from tabulate import tabulate
 from operator import itemgetter
 from functools import reduce
 
 
-def decodeDNAStrand(sd_data, dc_type):
+def decode_dna_strand(sd_data, dc_type):
     if dc_type == "dictionary":
         return sd_data[1], sd_data[2][0], sd_data[3][0]
     elif dc_type == "bitmap":
@@ -21,7 +23,7 @@ def find_item(str_item, pl_data):
     str_last = ''
     for idx, nxt_str in enumerate(pl_data):
         if nxt_str == str_item:
-            return True, idx+1
+            return True, idx + 1
         str_last = nxt_str
     if str_item > str_last:
         return False, 1
@@ -39,35 +41,116 @@ def get_count(str_data, c):
 
 
 # function for mapping string to corresponding ID in the Dictionary table
-def map_RDF_str_to_Id(str_item, sd_cnt, dict_mid_address, dict_strands):
+def map_id_to_rdf_string(str_id, sd_cnt, dic_mid_addr, dic_srds, tmp_srds):
+    st_idx = 1
+    srt_idx = 0
+    off_idx = 0
+    is_found = False
+    ed_idx = sd_cnt
+    sd_addr = dic_mid_addr["bitmap_dic"]
+    while is_found is False and sd_addr != 0:
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
+        pl_data, prv_zero, prv_one, ns_addr, ps_addr = \
+            decode_dna_strand(sd_data, "bitmap")
+        crn_one = get_count(str(pl_data), '1')
+        if prv_one < str_id <= crn_one:
+            is_found = True
+            str_id = str_id - prv_one
+            cnt_zero = get_n_count(str(pl_data), '0', str_id, '1')
+            cnt_one = get_n_count(str(pl_data), '1', cnt_zero, '0')
+            off_idx = str_id - cnt_one - 1
+            srt_idx = cnt_zero + prv_zero
+        elif str_id <= prv_one:
+            sd_addr = ps_addr
+        else:
+            sd_addr = ns_addr
+    frm_prv = False
+    if is_found is True:
+        sd_addr = dic_mid_addr["dictionary"]
+        is_found = False
+        while is_found is False and sd_addr != 0:
+            if tmp_srds.get(sd_addr) is None:
+                sd_data = dic_srds[sd_addr]
+                tmp_srds[sd_addr] = sd_data
+            else:
+                sd_data = tmp_srds[sd_addr]
+            pl_data, ns_addr, ps_addr = \
+                decode_dna_strand(sd_data, "dictionary")
+            if frm_prv is True:
+                md_idx = int(math.floor((st_idx + ed_idx) / 2))
+            else:
+                md_idx = int(math.ceil((st_idx + ed_idx) / 2))
+            frm_prv = False
+            if is_found is False and srt_idx < md_idx:
+                frm_prv = True
+                sd_addr = ps_addr
+                ed_idx = md_idx - 1
+            elif is_found is False and srt_idx > md_idx:
+                frm_prv = False
+                sd_addr = ns_addr
+                if (ed_idx - st_idx) % 2 == 0:
+                    st_idx = md_idx + 1
+                else:
+                    st_idx = md_idx
+            else:
+                is_found = True
+        return sd_data[1][off_idx]
+    else:
+        return None
+
+
+# function for mapping string to corresponding ID in the Dictionary table
+def map_rdf_string_to_id(str_item, sd_cnt, dic_mid_addr, dic_srds, tmp_srds):
     st_idx = 1
     md_idx = 0
     rt_idx = 0
     is_found = False
+    frm_prv = False
     ed_idx = sd_cnt
-    sd_addr = int(dict_mid_address["dictionary"])
+    sd_addr = int(dic_mid_addr["dictionary"])
     while is_found is False and sd_addr != 0:
-        sd_data = dict_strands[sd_addr]
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
         pl_data, ns_addr, ps_addr = \
-            decodeDNAStrand(sd_data, "dictionary")
-        md_idx = int(math.ceil((st_idx + ed_idx)/2))
+            decode_dna_strand(sd_data, "dictionary")
+        if frm_prv is True:
+            md_idx = int(math.floor((st_idx + ed_idx) / 2))
+        else:
+            md_idx = int(math.ceil((st_idx + ed_idx) / 2))
+        frm_prv = False
         is_found, of_idx = find_item(str_item, pl_data)
+
         if is_found is False and of_idx < 0:
+            frm_prv = True
             sd_addr = ps_addr
             ed_idx = md_idx - 1
         elif is_found is False and of_idx > 0:
+            frm_prv = False
             sd_addr = ns_addr
             if (ed_idx - st_idx) % 2 == 0:
                 st_idx = md_idx + 1
             else:
                 st_idx = md_idx
-    is_found = False
-    sd_addr = dict_mid_address["bitmap_dic"]
+    if is_found is False:
+        return 0
 
+    is_found = False
+    sd_addr = dic_mid_addr["bitmap_dic"]
     while is_found is False and sd_addr != 0:
-        sd_data = dict_strands[sd_addr]
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
-            decodeDNAStrand(sd_data, "bitmap")
+            decode_dna_strand(sd_data, "bitmap")
         tp_idx = ct_zero + get_count(str(pl_data), '0')
         if md_idx > ct_zero and (md_idx <= tp_idx):
             is_found = True
@@ -82,34 +165,42 @@ def map_RDF_str_to_Id(str_item, sd_cnt, dict_mid_address, dict_strands):
 
 
 # function for getting a range to index POS table corresponding to a predicate ID
-def get_range_using_bitmap_P(pred_id, dict_mid_address, dict_strands):
+def get_range_using_bitmap_p(prd_id, dic_mid_addr, dic_srds, tmp_srds):
     is_found = False
-    sd_addr = dict_mid_address["bitmap_pos"]
+    sd_addr = dic_mid_addr["bitmap_pos"]
     while is_found is False and sd_addr != 0:
-        sd_data = dict_strands[sd_addr]
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
-            decodeDNAStrand(sd_data, "bitmap")
+            decode_dna_strand(sd_data, "bitmap")
         temp_id = ct_zero + get_count(str(pl_data), '0')
-        if (pred_id > ct_zero) and (pred_id <= temp_id):
+        if (prd_id > ct_zero) and (prd_id <= temp_id):
             is_found = True
-        elif pred_id > temp_id:
+        elif prd_id > temp_id:
             sd_addr = ns_addr
         else:
             sd_addr = ps_addr
-    pred_id = pred_id - ct_zero
-    st_idx = get_n_count(str(pl_data), '1', pred_id, '0') + 1
-    ed_idx = get_n_count(str(pl_data), '1', pred_id+1, '0')
+    prd_id = prd_id - ct_zero
+    st_idx = get_n_count(str(pl_data), '1', prd_id, '0') + 1
+    ed_idx = get_n_count(str(pl_data), '1', prd_id + 1, '0')
     return st_idx, ed_idx
 
 
 # function for getting a range to index POS table corresponding to a subject ID
-def get_range_using_bitmap_S(subj_id, dict_mid_address, dict_strands):
+def get_range_using_bitmap_s(subj_id, dic_mid_addr, dic_srds, tmp_srds):
     is_found = False
-    sd_addr = dict_mid_address["bitmap_spo"]
+    sd_addr = dic_mid_addr["bitmap_spo"]
     while is_found is False and sd_addr != 0:
-        sd_data = dict_strands[sd_addr]
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
-            decodeDNAStrand(sd_data, "bitmap")
+            decode_dna_strand(sd_data, "bitmap")
         temp_id = ct_zero + get_count(str(pl_data), '0')
         if (subj_id > ct_zero) and (subj_id <= temp_id):
             is_found = True
@@ -124,13 +215,17 @@ def get_range_using_bitmap_S(subj_id, dict_mid_address, dict_strands):
 
 
 # function for getting a range to index OSP table corresponding to a object ID
-def get_range_using_bitmap_O(obj_id, dict_mid_address, dict_strands):
+def get_range_using_bitmap_o(obj_id, dic_mid_addr, dic_srds, tmp_srds):
     is_found = False
-    sd_addr = dict_mid_address["bitmap_osp"]
+    sd_addr = dic_mid_addr["bitmap_osp"]
     while is_found is False and sd_addr != 0:
-        sd_data = dict_strands[sd_addr]
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
-            decodeDNAStrand(sd_data, "bitmap")
+            decode_dna_strand(sd_data, "bitmap")
         temp_id = ct_zero + get_count(str(pl_data), '0')
         if (obj_id > ct_zero) and (obj_id <= temp_id):
             is_found = True
@@ -159,37 +254,43 @@ def get_strand_range(st_idx, ed_idx, num_per_srd, ctr):
             return 1, ed_idx % num_per_srd
 
 
-def get_matching_Ids(pl_data, st_idx, ed_idx, id):
+def get_matching_ids(pl_data, st_idx, ed_idx, mid):
     temp_list = []
-    for i, (obj_id, subj_id) in enumerate(pl_data):
-        if obj_id == id and (st_idx <= (i+1) <= ed_idx):
+    for rng_idx, (obj_id, subj_id) in enumerate(pl_data):
+        if obj_id == mid and (st_idx <= (rng_idx + 1) <= ed_idx):
             temp_list.append(subj_id)
+        elif mid == 0 and (st_idx <= (rng_idx + 1) <= ed_idx):
+            temp_list.append((obj_id, subj_id))
     return temp_list
 
 
 # function for getting a list of IDs using a range of values to index POS table
-def get_ids_using_lookup_POS(st_idx, ed_idx,
-                         obj_id, dict_mid_addr, dict_strands, num_per_strand):
+def get_ids_using_lookup_pos(st_idx, ed_idx, obj_id, dic_mid_addr,
+                             dic_srds, num_per_strand, tmp_srds):
     std_len = num_per_strand
     ctr = 1
     ls_sub_ids = []
-    do_loop = math.ceil((ed_idx - st_idx) / std_len) + 1
-    sd_addr = dict_mid_addr["index_pos"]
-    while ctr < do_loop:
+    do_loop = count_minimum_strands(st_idx, ed_idx, std_len)
+    sd_addr = dic_mid_addr["index_pos"]
+    while ctr <= do_loop:
         is_found = False
         st_idx_n, ed_idx_n = get_strand_range(st_idx, ed_idx, std_len, ctr)
         while is_found is False and sd_addr != 0:
-            sd_data = dict_strands[sd_addr]
+            if tmp_srds.get(sd_addr) is None:
+                sd_data = dic_srds[sd_addr]
+                tmp_srds[sd_addr] = sd_data
+            else:
+                sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
-                decodeDNAStrand(sd_data, "index_table")
+                decode_dna_strand(sd_data, "index_table")
             if ed_idx_n > prv_end:
                 sd_addr = ns_addr
-            elif st_idx > prv_start and (ed_idx <= prv_end):
+            elif st_idx >= prv_start and ed_idx <= prv_end:
                 is_found = True
                 ctr = ctr + 1
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
-                temp_list = get_matching_Ids(pl_data, st_idx_n, ed_idx_n, obj_id)
+                temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, obj_id)
                 ls_sub_ids.extend(temp_list)
                 temp_list.clear()
             else:
@@ -198,30 +299,32 @@ def get_ids_using_lookup_POS(st_idx, ed_idx,
 
 
 # function for getting a list of IDs using a range of values to index SPO table
-def get_ids_using_lookup_SPO(st_idx, ed_idx, pred_id, dict_mid_addr,
-                         dict_strands, num_per_strand):
+def get_ids_using_lookup_spo(st_idx, ed_idx, prd_id, dic_mid_addr,
+                             dic_srds, num_per_strand, tmp_srds):
     std_len = num_per_strand
     ctr = 1
     ls_obj_ids = []
-    do_loop = math.ceil((ed_idx - st_idx) / std_len) + 1
-    sd_addr = dict_mid_addr["index_spo"]
-    while ctr < do_loop:
+    do_loop = count_minimum_strands(st_idx, ed_idx, std_len)
+    sd_addr = dic_mid_addr["index_spo"]
+    while ctr <= do_loop:
         is_found = False
         st_idx_n, ed_idx_n = get_strand_range(st_idx, ed_idx, std_len, ctr)
         while is_found is False and sd_addr != 0:
-            sd_data = dict_strands[sd_addr]
+            if tmp_srds.get(sd_addr) is None:
+                sd_data = dic_srds[sd_addr]
+                tmp_srds[sd_addr] = sd_data
+            else:
+                sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
-                decodeDNAStrand(sd_data, "index_table")
+                decode_dna_strand(sd_data, "index_table")
             if ed_idx_n > prv_end:
                 sd_addr = ns_addr
-            elif st_idx > prv_start and (ed_idx <= prv_end):
-                print("asad", st_idx_n, ed_idx_n, prv_start)
+            elif st_idx >= prv_start and ed_idx <= prv_end:
                 is_found = True
                 ctr = ctr + 1
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
-                print("asad", st_idx_n, ed_idx_n, prv_start)
-                temp_list = get_matching_Ids(pl_data, st_idx_n, ed_idx_n, pred_id)
+                temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, prd_id)
                 ls_obj_ids.extend(temp_list)
                 temp_list.clear()
             else:
@@ -230,37 +333,46 @@ def get_ids_using_lookup_SPO(st_idx, ed_idx, pred_id, dict_mid_addr,
 
 
 # function for getting a list of IDs using a range of values to index OSP table
-def get_ids_using_lookup_OSP(st_idx, ed_idx, subj_id, dict_mid_addr,
-                         dict_strands, num_per_strand):
+def get_ids_using_lookup_osp(st_idx, ed_idx, sub_id, dic_mid_addr,
+                             dic_srds, num_per_strand, tmp_srds):
     std_len = num_per_strand
     ctr = 1
-    ls_pred_ids = []
-    do_loop = math.ceil((ed_idx - st_idx) / std_len) + 1
-    sd_addr = dict_mid_addr["index_osp"]
-    while ctr < do_loop:
+    ls_prd_ids = []
+    do_loop = count_minimum_strands(st_idx, ed_idx, std_len)
+    sd_addr = dic_mid_addr["index_osp"]
+    while ctr <= do_loop:
         is_found = False
         st_idx_n, ed_idx_n = get_strand_range(st_idx, ed_idx, std_len, ctr)
         while is_found is False and sd_addr != 0:
-            sd_data = dict_strands[sd_addr]
+            if tmp_srds.get(sd_addr) is None:
+                sd_data = dic_srds[sd_addr]
+                tmp_srds[sd_addr] = sd_data
+            else:
+                sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
-                decodeDNAStrand(sd_data, "index_table")
+                decode_dna_strand(sd_data, "index_table")
             if ed_idx_n > prv_end:
                 sd_addr = ns_addr
-            elif st_idx > prv_start and (ed_idx <= prv_end):
+            elif st_idx >= prv_start and ed_idx <= prv_end:
                 is_found = True
                 ctr = ctr + 1
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
-                temp_list = get_matching_Ids(
-                    pl_data, st_idx_n, ed_idx_n, subj_id)
-                ls_pred_ids.extend(temp_list)
+                temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, sub_id)
+                ls_prd_ids.extend(temp_list)
                 temp_list.clear()
             else:
                 sd_addr = ps_addr
-    return ls_pred_ids
+    return ls_prd_ids
 
 
-def create_RDF_triple_table():
+def count_minimum_strands(st_idx, ed_idx, std_len):
+    s = math.ceil(st_idx/std_len)
+    e = math.ceil(ed_idx/std_len)
+    return e - s + 1
+
+
+def create_rdf_triple_table():
     # create data
     data = [["Spanish Team", "represent", "Spain"],
             ["Madrid", "capital", "Spain"],
@@ -301,7 +413,6 @@ def convert_to_bitmap(tab_col, n_dict_elm=20):
 
 
 def generate_index_bitmaps(tab_spo, tab_pos, tab_osp, n_dict_elm):
-
     tab_spo = sorted(tab_spo, key=itemgetter(0, 1, 2))
     tab_pos = sorted(tab_pos, key=itemgetter(0, 1, 2))
     tab_osp = sorted(tab_osp, key=itemgetter(0, 1, 2))
@@ -330,17 +441,17 @@ def generate_index_tables(rdf_spo):
     return rdf_spo, rdf_pos, rdf_osp
 
 
-def convert_ID_based_triple_storage(n_tuples):
+def convert_id_based_triple_storage(n_tpl):
     dict_items = {}
     rdf_triples = []
     list_items = []
-    for row in n_tuples:
+    for row in n_tpl:
         for col in row:
             list_items.append(str(col))
     list_items = sorted(set(list_items))
     for i, j in enumerate(list_items, 1):
         dict_items[j] = i
-    for row in n_tuples:
+    for row in n_tpl:
         rdf_tuple = []
         for col in row:
             item_id = dict_items.get(str(col))
@@ -349,7 +460,7 @@ def convert_ID_based_triple_storage(n_tuples):
     return dict_items, rdf_triples
 
 
-def binary_search(dict, val, low, high):
+def binary_search(tmp_dic, val, low, high):
     if low > high:
         return False
     else:
@@ -358,20 +469,19 @@ def binary_search(dict, val, low, high):
             return
         elif val > mid:
             n_addr = int((mid + 1 + high) / 2)
-            (a, b) = dict.get(mid)
-            dict[mid] = (n_addr, b)
-            return binary_search(dict, val, mid + 1, high)
+            (a, b) = tmp_dic.get(mid)
+            tmp_dic[mid] = (n_addr, b)
+            return binary_search(tmp_dic, val, mid + 1, high)
         else:
             p_addr = int((low + mid - 1) / 2)
-            (a, b) = dict.get(mid)
-            dict[mid] = (a, p_addr)
-            return binary_search(dict, val, low, mid - 1)
+            (a, b) = tmp_dic.get(mid)
+            tmp_dic[mid] = (a, p_addr)
+            return binary_search(tmp_dic, val, low, mid - 1)
 
 
 def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
-                       b_spo, b_pos, b_osp, INT_SIZE = 2,
-                       DNA_STRAND_SIZE = 28):
-
+                       b_spo, b_pos, b_osp, INT_SIZE=2,
+                       DNA_STRAND_SIZE=28):
     # Mapping dictionary items into as many dna strands as needed
     dic_srds = {}
     dic_adrs = {}
@@ -476,7 +586,7 @@ def compose_dna_strand(dic_srds, srd_cnt, high_val, lst_srds, srd_type):
     for i in range(1, high_val):
         binary_search(my_dict, i, 1, high_val)
     mid = int((1 + high_val) / 2) + srd_cnt - 1
-    prv_zeros = 0
+    prv_zero = 0
     prv_ones = 0
     cnt_int = 1
     for j in range(1, high_val):
@@ -489,29 +599,179 @@ def compose_dna_strand(dic_srds, srd_cnt, high_val, lst_srds, srd_type):
             dic_srds[srd_cnt] = [[srd_cnt], lst_srds[j - 1],
                                  [nxt_adr], [prv_adr]]
         elif srd_type == "bitmap":
-            dic_srds[srd_cnt] = [[srd_cnt], lst_srds[j - 1], [prv_zeros],
+            dic_srds[srd_cnt] = [[srd_cnt], lst_srds[j - 1], [prv_zero],
                                  [prv_ones], [nxt_adr], [prv_adr]]
             prv_zeros = get_count(str(lst_srds[j - 1][0]), '0')
             prv_ones = get_count(str(lst_srds[j - 1][0]), '1')
         else:
             dic_srds[srd_cnt] = [
                 [srd_cnt], lst_srds[j - 1], [cnt_int],
-                [cnt_int + len(lst_srds[j - 1])-1], [nxt_adr], [prv_adr]]
+                [cnt_int + len(lst_srds[j - 1]) - 1], [nxt_adr], [prv_adr]]
             cnt_int = cnt_int + len(lst_srds[j - 1])
         srd_cnt = srd_cnt + 1
 
     return mid, srd_cnt
 
 
+def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                tmp_dic_srds):
+    print("............. Query Processing.............!")
+    ls_out = []
+    if qr_type == "?PO":
+        pre_id = map_rdf_string_to_id(prd_str,
+                                   cnt_dic_srds, dic_mid_addr,
+                                   dic_srds, tmp_dic_srds)
+        obj_id = map_rdf_string_to_id(obj_str,
+                                   cnt_dic_srds, dic_mid_addr,
+                                   dic_srds, tmp_dic_srds)
+        s_idx, e_idx = get_range_using_bitmap_p(pre_id, dic_mid_addr,
+                                                dic_srds, tmp_dic_srds)
+        sub_ids = get_ids_using_lookup_pos(s_idx, e_idx, obj_id,
+                                           dic_mid_addr, dic_srds,
+                                           elm_per_srd, tmp_dic_srds)
+        for sid in sub_ids:
+            sub_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
+                                       dic_srds, tmp_dic_srds)
+            ls_out.append(sub_str)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+
+    elif qr_type == "S?O":
+        sub_id = map_rdf_string_to_id(sub_str,
+                                      cnt_dic_srds, dic_mid_addr,
+                                      dic_srds, tmp_dic_srds)
+        obj_id = map_rdf_string_to_id(obj_str,
+                                      cnt_dic_srds, dic_mid_addr,
+                                      dic_srds, tmp_dic_srds)
+        s_idx, e_idx = get_range_using_bitmap_o(obj_id, dic_mid_addr,
+                                                dic_srds, tmp_dic_srds)
+        prd_ids = get_ids_using_lookup_osp(s_idx, e_idx, sub_id,
+                                           dic_mid_addr, dic_srds,
+                                           elm_per_srd, tmp_dic_srds)
+        for sid in prd_ids:
+            prd_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
+                                           dic_srds, tmp_dic_srds)
+            ls_out.append(prd_str)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+
+    elif qr_type == "SP?":
+        sub_id = map_rdf_string_to_id(sub_str,
+                                      cnt_dic_srds, dic_mid_addr,
+                                      dic_srds, tmp_dic_srds)
+        prd_id = map_rdf_string_to_id(prd_str,
+                                      cnt_dic_srds, dic_mid_addr,
+                                      dic_srds, tmp_dic_srds)
+        s_idx, e_idx = get_range_using_bitmap_s(sub_id, dic_mid_addr,
+                                                dic_srds, tmp_dic_srds)
+        obj_ids = get_ids_using_lookup_spo(s_idx, e_idx, prd_id,
+                                           dic_mid_addr, dic_srds,
+                                           elm_per_srd, tmp_dic_srds)
+        for sid in obj_ids:
+            obj_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
+                                           dic_srds, tmp_dic_srds)
+            ls_out.append(obj_str)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+
+    elif qr_type == "??O":
+        obj_id = map_rdf_string_to_id(obj_str,
+                                      cnt_dic_srds, dic_mid_addr,
+                                      dic_srds, tmp_dic_srds)
+        s_idx, e_idx = get_range_using_bitmap_o(obj_id, dic_mid_addr,
+                                                dic_srds, tmp_dic_srds)
+
+        obj_ids = get_ids_using_lookup_osp(s_idx, e_idx, 0,
+                                           dic_mid_addr, dic_srds,
+                                           elm_per_srd, tmp_dic_srds)
+        for (sid, pid) in obj_ids:
+            sub_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
+                                           dic_srds, tmp_dic_srds)
+            prd_str = map_id_to_rdf_string(pid, cnt_dic_srds, dic_mid_addr,
+                                           dic_srds, tmp_dic_srds)
+            ls_out.append((sub_str, prd_str))
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+
+    elif qr_type == "?P?":
+        prd_id = map_rdf_string_to_id(prd_str,
+                                      cnt_dic_srds, dic_mid_addr,
+                                      dic_srds, tmp_dic_srds)
+        s_idx, e_idx = get_range_using_bitmap_p(prd_id, dic_mid_addr,
+                                                dic_srds, tmp_dic_srds)
+
+        prd_ids = get_ids_using_lookup_pos(s_idx, e_idx, 0,
+                                           dic_mid_addr, dic_srds,
+                                           elm_per_srd, tmp_dic_srds)
+        for (oid, sid) in prd_ids:
+            sub_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
+                                           dic_srds, tmp_dic_srds)
+            obj_str = map_id_to_rdf_string(oid, cnt_dic_srds, dic_mid_addr,
+                                           dic_srds, tmp_dic_srds)
+            ls_out.append((sub_str, obj_str))
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+
+    elif qr_type == "S??":
+        sub_id = map_rdf_string_to_id(sub_str,
+                                      cnt_dic_srds, dic_mid_addr,
+                                      dic_srds, tmp_dic_srds)
+        s_idx, e_idx = get_range_using_bitmap_s(sub_id, dic_mid_addr,
+                                                dic_srds, tmp_dic_srds)
+
+        sub_ids = get_ids_using_lookup_spo(s_idx, e_idx, 0,
+                                           dic_mid_addr, dic_srds,
+                                           elm_per_srd, tmp_dic_srds)
+        for (pid, oid) in sub_ids:
+            prd_str = map_id_to_rdf_string(pid, cnt_dic_srds, dic_mid_addr,
+                                           dic_srds, tmp_dic_srds)
+            obj_str = map_id_to_rdf_string(oid, cnt_dic_srds, dic_mid_addr,
+                                           dic_srds, tmp_dic_srds)
+            ls_out.append((prd_str, obj_str))
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+
+
+def print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds):
+    print("Total Number of Strands Accessed:", len(tmp_dic_srds))
+    for idx, str_idx in enumerate(tmp_dic_srds):
+        print("Strand", idx + 1, tmp_dic_srds[str_idx])
+    if qr_type == "?PO":
+        print("(Subject)", ls_out)
+        for out in ls_out:
+            print("SPO:", out, prd_str, obj_str)
+    elif qr_type == "S?O":
+        print("(Predicate):", ls_out)
+        for out in ls_out:
+            print("SPO:", sub_str, out, obj_str)
+    elif qr_type == "SP?":
+        print("(Object):", ls_out)
+        for out in ls_out:
+            print("SPO:", sub_str, prd_str, out)
+    elif qr_type == "??O":
+        print("(Subject, Predicate):", ls_out)
+        for (sub_str, prd_str) in ls_out:
+            print("SPO:", sub_str, prd_str, obj_str)
+    elif qr_type == "?P?":
+        print("(Subject, Object):", ls_out)
+        for (sub_str, obj_str) in ls_out:
+            print("SPO:", sub_str, prd_str, obj_str)
+    elif qr_type == "S??":
+        print("(Subject, Predicate):", ls_out)
+        for (prd_str, obj_str) in ls_out:
+            print("SPO:", sub_str, prd_str, obj_str)
+    else:
+        print("Ah!.........No Query Pattern Matched!......")
+
+
 if __name__ == '__main__':
 
-    pair_per_strand = 6
+    elm_per_srd = 6
+    byt_per_srd = 28
+    int_size = 2
 
     print("\nCreating tuples from RDF triple table....\n")
-    data_tuples = create_RDF_triple_table()
+    dt_tpl = create_rdf_triple_table()
 
     t_dic, t_rdf = \
-        convert_ID_based_triple_storage(data_tuples)
+        convert_id_based_triple_storage(dt_tpl)
 
     t_spo, t_pos, t_osp = \
         generate_index_tables(t_rdf)
@@ -519,26 +779,51 @@ if __name__ == '__main__':
     t_spo, t_pos, t_osp, b_spo, b_pos, b_osp = \
         generate_index_bitmaps(t_spo, t_pos, t_osp, len(t_dic))
 
-    dict_strands_count, dict_of_strands, dict_of_mid_address = \
-        map_to_dna_strands(t_dic, t_spo, t_pos, t_osp, b_spo, b_pos, b_osp)
+    cnt_dic_srds, dic_srds, dic_mid_addr = \
+        map_to_dna_strands(t_dic, t_spo, t_pos, t_osp, b_spo,
+                           b_pos, b_osp, int_size, byt_per_srd)
 
     print("\nMapping to DNA Strands...\n")
-    for i, x in enumerate(dict_of_strands):
-        print("Strand", i+1, dict_of_strands[x])
+    for i, x in enumerate(dic_srds):
+        print("Strand", i + 1, dic_srds[x])
 
     print("\nMapping Queries to DNA Strands...\n")
 
-    print("............. Query One .............!")
-    pre_id = map_RDF_str_to_Id("playsFor",
-                               dict_strands_count, dict_of_mid_address, dict_of_strands)
-    print("Predicate=playsFor id:", pre_id)
+    tmp_dic_srds: dict[Any, Any] = {}
 
-    obj_id = map_RDF_str_to_Id("Spanish Team",
-                               dict_strands_count, dict_of_mid_address, dict_of_strands)
-    print("Object=Spanish team id:", obj_id)
+    map_rdf_sparql_query_to_dna("?PO", None, "playsFor", "Spanish Team",
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                tmp_dic_srds)
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna("S?O", "Spanish Team", None, "Spain",
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                tmp_dic_srds)
 
-    s_idx, e_idx = get_range_using_bitmap_P(pre_id, dict_of_mid_address, dict_of_strands)
-
-    subj_ids = get_ids_using_lookup_POS(s_idx, e_idx, obj_id,
-                                    dict_of_mid_address, dict_of_strands, pair_per_strand)
-    print("Subject id(s):", subj_ids)
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna("SP?", "Iker Casillas", "born", None,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                tmp_dic_srds)
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna("??O", None, None, "Spain",
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                tmp_dic_srds)
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna("?P?", None, "position", None,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                tmp_dic_srds)
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna("S??", "Iker Casillas", None, None,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                tmp_dic_srds)
