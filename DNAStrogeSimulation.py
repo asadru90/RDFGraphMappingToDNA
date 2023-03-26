@@ -73,7 +73,6 @@ def map_id_to_rdf_string(str_id, sd_cnt, dic_mid_addr, dic_srds, tmp_srds):
             sd_addr = ps_addr
         else:
             sd_addr = ns_addr
-
     if is_found is True:
         sd_addr = dic_mid_addr["dictionary"]
         is_found = False
@@ -482,10 +481,11 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
             tmp_srd.clear()
             tmp_srd.append(nxt_str)
             dic_bm = dic_bm + "01"
+    dic_bm = dic_bm + "0"
     lst_srds.append(tmp_srd.copy())
 
-    dic_srds_cnt = len(lst_srds)
-    high_val = len(lst_srds)
+    dic_srds_cnt = len(lst_srds) + 1
+    high_val = len(lst_srds) + 1
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "dictionary")
     dic_adrs["dictionary"] = mid
@@ -573,6 +573,8 @@ def compose_dna_strand(dic_srds, srd_cnt, high_val, lst_srds, srd_type):
     cnt_int = 1
     for j in range(1, high_val):
         (nxt_adr, prv_adr) = my_dict[j]
+        if j == high_val - 1:
+            nxt_adr = 0
         if nxt_adr > 0:
             nxt_adr = nxt_adr + prv_cnt - 1
         if prv_adr > 0:
@@ -591,7 +593,6 @@ def compose_dna_strand(dic_srds, srd_cnt, high_val, lst_srds, srd_type):
                 [cnt_int + len(lst_srds[j - 1]) - 1], [nxt_adr], [prv_adr]]
             cnt_int = cnt_int + len(lst_srds[j - 1])
         srd_cnt = srd_cnt + 1
-
     return mid, srd_cnt
 
 
@@ -625,7 +626,6 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
         print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
 
     elif qr_type == "S?O":
-        print("Query")
         sub_id = map_rdf_string_to_id(sub_str,
                                       cnt_dic_srds, dic_mid_addr,
                                       dic_srds, tmp_dic_srds)
@@ -650,9 +650,9 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
         prd_id = map_rdf_string_to_id(prd_str,
                                       cnt_dic_srds, dic_mid_addr,
                                       dic_srds, tmp_dic_srds)
-        s_idx, e_idx = get_range_using_bitmap_s(t_dic[sub_str], dic_mid_addr,
+        s_idx, e_idx = get_range_using_bitmap_s(sub_id, dic_mid_addr,
                                                 dic_srds, tmp_dic_srds)
-        obj_ids = get_ids_using_lookup_spo(s_idx, e_idx, t_dic[prd_str],
+        obj_ids = get_ids_using_lookup_spo(s_idx, e_idx, prd_id,
                                            dic_mid_addr, dic_srds,
                                            elm_per_srd, tmp_dic_srds)
         for sid in obj_ids:
@@ -665,7 +665,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
         obj_id = map_rdf_string_to_id(obj_str,
                                       cnt_dic_srds, dic_mid_addr,
                                       dic_srds, tmp_dic_srds)
-        s_idx, e_idx = get_range_using_bitmap_o(t_dic[obj_str], dic_mid_addr,
+        s_idx, e_idx = get_range_using_bitmap_o(obj_id, dic_mid_addr,
                                                 dic_srds, tmp_dic_srds)
 
         obj_ids = get_ids_using_lookup_osp(s_idx, e_idx, 0,
@@ -683,7 +683,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
         prd_id = map_rdf_string_to_id(prd_str,
                                       cnt_dic_srds, dic_mid_addr,
                                       dic_srds, tmp_dic_srds)
-        s_idx, e_idx = get_range_using_bitmap_p(t_dic[prd_str], dic_mid_addr,
+        s_idx, e_idx = get_range_using_bitmap_p(prd_id, dic_mid_addr,
                                                 dic_srds, tmp_dic_srds)
 
         prd_ids = get_ids_using_lookup_pos(s_idx, e_idx, 0,
@@ -701,12 +701,15 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
         sub_id = map_rdf_string_to_id(sub_str,
                                       cnt_dic_srds, dic_mid_addr,
                                       dic_srds, tmp_dic_srds)
-        s_idx, e_idx = get_range_using_bitmap_s(t_dic[sub_str], dic_mid_addr,
+
+        s_idx, e_idx = get_range_using_bitmap_s(sub_id, dic_mid_addr,
                                                 dic_srds, tmp_dic_srds)
+
 
         sub_ids = get_ids_using_lookup_spo(s_idx, e_idx, 0,
                                            dic_mid_addr, dic_srds,
                                            elm_per_srd, tmp_dic_srds)
+
         for (pid, oid) in sub_ids:
             prd_str = map_id_to_rdf_string(pid, cnt_dic_srds, dic_mid_addr,
                                            dic_srds, tmp_dic_srds)
@@ -741,7 +744,7 @@ def print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds):
         for (sub_str, obj_str) in ls_out:
             print("SPO:", sub_str, prd_str, obj_str)
     elif qr_type == "S??":
-        print("(Subject, Predicate):", ls_out)
+        print("(Predicate, Object):", ls_out)
         for (prd_str, obj_str) in ls_out:
             print("SPO:", sub_str, prd_str, obj_str)
     else:
@@ -803,8 +806,8 @@ def create_rdf_triple_table():
 
 if __name__ == '__main__':
 
-    elm_per_srd = 14
-    byt_per_srd = 64
+    elm_per_srd = 11
+    byt_per_srd = 48
     int_size = 2
 
     print("\nCreating tuples from RDF triple table....\n")
@@ -828,9 +831,11 @@ if __name__ == '__main__':
         print("Strand", i + 1, dic_srds[x])
 
     print("\nMapping Queries to DNA Strands...\n")
+    min_srds = 1024
+    max_srds = 0
+    avg_srds = 0
 
     tmp_dic_srds: dict[Any, Any] = {}
-
 
     qr_type = "?PO"
     sub_str = None
@@ -844,6 +849,13 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    avg_srds = avg_srds + tmp_cnt
+    tmp_cnt = 0
 
     qr_type = "S?O"
     sub_str = "Albert_Camus"
@@ -857,6 +869,15 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    avg_srds = avg_srds + tmp_cnt
+    tmp_cnt = 0
+
     qr_type = "SP?"
     sub_str = "Student10"
     prd_str = "takesCourse"
@@ -869,6 +890,13 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    avg_srds = avg_srds + tmp_cnt
+    tmp_cnt = 0
 
     qr_type = "??O"
     sub_str = None
@@ -882,6 +910,13 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    avg_srds = avg_srds + tmp_cnt
+    tmp_cnt = 0
 
     qr_type = "?P?"
     sub_str = None
@@ -895,9 +930,16 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    avg_srds = avg_srds + tmp_cnt
+    tmp_cnt = 0
 
     qr_type = "S??"
-    sub_str = "Allen_Ginsberg"
+    sub_str = "Student10"
     prd_str = None
     obj_str = None
 
@@ -908,3 +950,39 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    avg_srds = avg_srds + tmp_cnt
+    tmp_cnt = 0
+
+    print("............. OUTPUT Graph 1 ..................")
+    avg_srds = int(avg_srds / 6)
+    io_srd = avg_srds * byt_per_srd * 4
+    t_srds = len(dic_srds)
+    gr_size = t_srds * byt_per_srd * 4
+    pm_ovh = t_srds * 96
+    pc_ovh = int((pm_ovh / (gr_size + pm_ovh)) * 100)
+    print("This is related to RDF in paper! Automatic Weight Generation")
+    print("Total number of strands......!", t_srds)
+    print("Strands for query processing.!", min_srds,
+          "    min        | ", max_srds, "  max |", avg_srds,
+          "avg")
+    print("Total I/O per query execution!", io_srd, " nucleotides| ",
+          io_srd * 2, "bits|", int(io_srd / 4), "Bytes|", "total(%)",
+          int((io_srd/gr_size)*100))
+    print("Per strand primer data size..!", 96, "   nucleotides| ",
+          96 * 2, " bits|", int(96/4), "Bytes")
+    print("Per strand payload data size.!",  byt_per_srd * 4, "  nucleotides| ",
+          byt_per_srd * 8, "bits|", byt_per_srd, "Bytes")
+    print("Total primers overhead(%)....!", pc_ovh)
+    print("Total payload data(%)........!", 100-pc_ovh)
+    print("Primer addresses overhead....!", pm_ovh, " nucleotides|",
+          pm_ovh * 2, " bits|", int(pm_ovh / 4), "Bytes|",
+          int(pm_ovh / (4 * 1024)), "KB")
+    print("Total graph data size........!", gr_size, "nucleotides|",
+          gr_size * 2, "bits|", int(gr_size / 4), "Bytes|",
+          int(gr_size / (4 * 1024)), "KB")
+    print("............. OUTPUT Graph 1 ..................")
