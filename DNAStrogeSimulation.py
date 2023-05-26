@@ -1,3 +1,4 @@
+import csv
 import re
 import math
 from typing import Dict, Any
@@ -149,8 +150,8 @@ def map_rdf_string_to_id(str_item, sd_cnt, dic_mid_addr, dic_srds, tmp_srds):
 
 # function for getting a range to index POS table corresponding to a predicate ID
 def get_range_using_bitmap_p(prd_id, dic_mid_addr, dic_srds, tmp_srds):
-    ct_zero = 0
-    ct_one = 0
+    st_idx = 0
+    ed_idx = 0
     is_found = False
     sd_addr = dic_mid_addr["bitmap_pos"]
     while is_found is False and sd_addr != 0:
@@ -162,23 +163,46 @@ def get_range_using_bitmap_p(prd_id, dic_mid_addr, dic_srds, tmp_srds):
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
             decode_dna_strand(sd_data, "bitmap")
         temp_id = ct_zero + get_count(str(pl_data), '0')
-        if (prd_id > ct_zero) and (prd_id <= temp_id):
+        if ct_zero < prd_id <= temp_id:
+            st_idx = get_n_count(str(pl_data),
+                                 '1', prd_id - ct_zero, '0') + 1
+            st_idx = st_idx + ct_one
             is_found = True
         elif prd_id > temp_id:
             sd_addr = ns_addr
         else:
             sd_addr = ps_addr
-    prd_id = prd_id - ct_zero
-    st_idx = get_n_count(str(pl_data), '1', prd_id, '0') + 1
-    ed_idx = get_n_count(str(pl_data), '1', prd_id + 1, '0')
 
-    return st_idx + ct_one, ed_idx + ct_one
+    is_found = False
+    prd_id = prd_id + 1
+    sd_addr = dic_mid_addr["bitmap_pos"]
+    while is_found is False and sd_addr != 0:
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
+        pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
+            decode_dna_strand(sd_data, "bitmap")
+        temp_id = ct_zero + get_count(str(pl_data), '0')
+        if ct_zero < prd_id <= temp_id:
+            ed_idx = get_n_count(str(pl_data),
+                                 '1', prd_id - ct_zero, '0')
+            ed_idx = ed_idx + ct_one
+            is_found = True
+        elif prd_id > temp_id:
+            sd_addr = ns_addr
+        else:
+            sd_addr = ps_addr
+
+    print("======================getrange_p:asad bitmap", st_idx, ed_idx)
+    return st_idx, ed_idx
 
 
 # function for getting a range to index POS table corresponding to a subject ID
-def get_range_using_bitmap_s(subj_id, dic_mid_addr, dic_srds, tmp_srds):
-    ct_zero = 0
-    ct_one = 0
+def get_range_using_bitmap_s(sub_id, dic_mid_addr, dic_srds, tmp_srds):
+    st_idx = 0
+    ed_idx = 0
     is_found = False
     sd_addr = dic_mid_addr["bitmap_spo"]
     while is_found is False and sd_addr != 0:
@@ -190,22 +214,46 @@ def get_range_using_bitmap_s(subj_id, dic_mid_addr, dic_srds, tmp_srds):
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
             decode_dna_strand(sd_data, "bitmap")
         temp_id = ct_zero + get_count(str(pl_data), '0')
-        if (subj_id > ct_zero) and (subj_id <= temp_id):
+        if ct_zero < sub_id <= temp_id:
+            st_idx = get_n_count(str(pl_data),
+                                 '1', sub_id - ct_zero, '0') + 1
+            st_idx = st_idx + ct_one
             is_found = True
-        elif subj_id > temp_id:
+        elif sub_id > temp_id:
             sd_addr = ns_addr
         else:
             sd_addr = ps_addr
-    subj_id = subj_id - ct_zero
-    st_idx = get_n_count(str(pl_data), '1', subj_id, '0') + 1
-    ed_idx = get_n_count(str(pl_data), '1', subj_id + 1, '0')
-    return st_idx + ct_one, ed_idx + ct_one
+
+    is_found = False
+    sub_id = sub_id + 1
+    sd_addr = dic_mid_addr["bitmap_spo"]
+    while is_found is False and sd_addr != 0:
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
+        pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
+            decode_dna_strand(sd_data, "bitmap")
+        temp_id = ct_zero + get_count(str(pl_data), '0')
+        if ct_zero < sub_id <= temp_id:
+            ed_idx = get_n_count(str(pl_data),
+                                 '1', sub_id - ct_zero, '0')
+            ed_idx = ed_idx + ct_one
+            is_found = True
+        elif sub_id > temp_id:
+            sd_addr = ns_addr
+        else:
+            sd_addr = ps_addr
+
+    print("======================getrange_s:asad bitmap", st_idx, ed_idx)
+    return st_idx, ed_idx
 
 
 # function for getting a range to index OSP table corresponding to a object ID
 def get_range_using_bitmap_o(obj_id, dic_mid_addr, dic_srds, tmp_srds):
-    ct_zero = 0
-    ct_one = 0
+    st_idx = 0
+    ed_idx = 0
     is_found = False
     sd_addr = dic_mid_addr["bitmap_osp"]
     while is_found is False and sd_addr != 0:
@@ -217,27 +265,51 @@ def get_range_using_bitmap_o(obj_id, dic_mid_addr, dic_srds, tmp_srds):
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
             decode_dna_strand(sd_data, "bitmap")
         temp_id = ct_zero + get_count(str(pl_data), '0')
-        if (obj_id > ct_zero) and (obj_id <= temp_id):
+        if ct_zero < obj_id <= temp_id:
+            st_idx = get_n_count(str(pl_data),
+                                 '1', obj_id - ct_zero, '0') + 1
+            st_idx = st_idx + ct_one
             is_found = True
         elif obj_id > temp_id:
             sd_addr = ns_addr
         else:
             sd_addr = ps_addr
-    obj_id = obj_id - ct_zero
-    st_idx = get_n_count(str(pl_data), '1', obj_id, '0') + 1
-    ed_idx = get_n_count(str(pl_data), '1', obj_id + 1, '0')
-    return st_idx + ct_one, ed_idx + ct_one
+
+    is_found = False
+    obj_id = obj_id + 1
+    sd_addr = dic_mid_addr["bitmap_osp"]
+    while is_found is False and sd_addr != 0:
+        if tmp_srds.get(sd_addr) is None:
+            sd_data = dic_srds[sd_addr]
+            tmp_srds[sd_addr] = sd_data
+        else:
+            sd_data = tmp_srds[sd_addr]
+        pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
+            decode_dna_strand(sd_data, "bitmap")
+        temp_id = ct_zero + get_count(str(pl_data), '0')
+        if ct_zero < obj_id <= temp_id:
+            ed_idx = get_n_count(str(pl_data),
+                                 '1', obj_id - ct_zero, '0')
+            ed_idx = ed_idx + ct_one
+            is_found = True
+        elif obj_id > temp_id:
+            sd_addr = ns_addr
+        else:
+            sd_addr = ps_addr
+
+    print("======================getrange_o:asad bitmap", st_idx, ed_idx)
+    return st_idx, ed_idx
 
 
 def get_strand_range(st_idx, ed_idx, num_per_srd):
 
     rng_str = num_per_srd * math.ceil(st_idx / num_per_srd) - num_per_srd
     rng_end = num_per_srd * math.ceil(st_idx / num_per_srd) + 1
-    if (rng_str < st_idx < rng_end) and (rng_str < ed_idx < rng_end):
+    if (rng_str <= st_idx < rng_end) and (rng_str <= ed_idx < rng_end):
         return 0, 0, st_idx, ed_idx
     else:
-        return rng_end, rng_end + ed_idx - num_per_srd - 1, \
-               st_idx, rng_end - 1
+        return int(rng_end), int(ed_idx), \
+               int(st_idx), int(rng_end - 1)
 
 
 def get_matching_ids(pl_data, st_idx, ed_idx, mid):
@@ -689,6 +761,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
         prd_ids = get_ids_using_lookup_pos(s_idx, e_idx, 0,
                                            dic_mid_addr, dic_srds,
                                            elm_per_srd, tmp_dic_srds)
+
         for (oid, sid) in prd_ids:
             sub_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
                                            dic_srds, tmp_dic_srds)
@@ -806,8 +879,8 @@ def create_rdf_triple_table():
 
 if __name__ == '__main__':
 
-    elm_per_srd = 11
-    byt_per_srd = 48
+    byt_per_srd = 256
+    elm_per_srd = byt_per_srd/4 - 1
     int_size = 2
 
     print("\nCreating tuples from RDF triple table....\n")
@@ -831,17 +904,16 @@ if __name__ == '__main__':
         print("Strand", i + 1, dic_srds[x])
 
     print("\nMapping Queries to DNA Strands...\n")
-    min_srds = 1024
+    min_srds = 8024
     max_srds = 0
     avg_srds = 0
 
     tmp_dic_srds: dict[Any, Any] = {}
 
-    qr_type = "?PO"
-    sub_str = None
-    prd_str = "influenced"
-    obj_str = "Orhan_Pamuk"
-
+    qr_type = "SP?"
+    sub_str = "Allen_Ginsberg"
+    prd_str = "occupation"
+    obj_str = None
     tmp_dic_srds.clear()
     map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                 cnt_dic_srds,
@@ -860,8 +932,7 @@ if __name__ == '__main__':
     qr_type = "S?O"
     sub_str = "Albert_Camus"
     prd_str = None
-    obj_str = "Friedrich_Nietzsche"
-
+    obj_str = "Absurdism"
     tmp_dic_srds.clear()
     map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                 cnt_dic_srds,
@@ -879,10 +950,47 @@ if __name__ == '__main__':
     tmp_cnt = 0
 
     qr_type = "SP?"
-    sub_str = "Student10"
-    prd_str = "takesCourse"
+    sub_str = "Student49"
+    prd_str = "emailAddress"
     obj_str = None
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                t_dic,
+                                tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    avg_srds = avg_srds + tmp_cnt
+    tmp_cnt = 0
 
+    qr_type = "S??"
+    sub_str = "Student49"
+    prd_str = None
+    obj_str = None
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                t_dic,
+                                tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    avg_srds = avg_srds + tmp_cnt
+    tmp_cnt = 0
+
+    qr_type = "?P?"
+    sub_str = None
+    prd_str = "telephone"
+    obj_str = None
     tmp_dic_srds.clear()
     map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                 cnt_dic_srds,
@@ -901,48 +1009,7 @@ if __name__ == '__main__':
     qr_type = "??O"
     sub_str = None
     prd_str = None
-    obj_str = "”1926-06-03”"
-
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    avg_srds = avg_srds + tmp_cnt
-    tmp_cnt = 0
-
-    qr_type = "?P?"
-    sub_str = None
-    prd_str = "emailAddress"
-    obj_str = None
-
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    avg_srds = avg_srds + tmp_cnt
-    tmp_cnt = 0
-
-    qr_type = "S??"
-    sub_str = "Student10"
-    prd_str = None
-    obj_str = None
-
+    obj_str = "John_Lennon"
     tmp_dic_srds.clear()
     map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                 cnt_dic_srds,
@@ -965,7 +1032,6 @@ if __name__ == '__main__':
     gr_size = t_srds * byt_per_srd * 4
     pm_ovh = t_srds * 96
     pc_ovh = int((pm_ovh / (gr_size + pm_ovh)) * 100)
-    print("This is related to RDF in paper! Automatic Weight Generation")
     print("Total number of strands......!", t_srds)
     print("Strands for query processing.!", min_srds,
           "    min        | ", max_srds, "  max |", avg_srds,
