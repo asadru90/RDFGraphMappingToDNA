@@ -1,0 +1,154 @@
+C:\Users\admin\PycharmProjects\RDFGraphData\venv\Scripts\python.exe C:/Users/admin/PycharmProjects/RDFGraphData/main.py 
+
+Creating tuples from RDF triple table....
+
+Subject               Property                             Object
+--------------------  -----------------------------------  -----------------------------------------
+Allen_Ginsberg        wikiPageUsesTemplate                 Template:Infobox writer
+Allen_Ginsberg        influenced                           John_Lennon
+Allen_Ginsberg        occupation                           ”Writer, poet”@en
+Allen_Ginsberg        influences                           Fyodor_Dostoyevsky
+Allen_Ginsberg        deathPlace                           ”New York City, United States”@en
+Allen_Ginsberg        deathDate                            ”1997-04-05”
+Allen_Ginsberg        birthPlace                           ”Newark, New Jersey, United States”@en
+Allen_Ginsberg        birthDate                            ”1926-06-03”
+Albert_Camus          wikiPageUsesTemplate                 Template:Infobox philosopher
+Albert_Camus          influenced                           Orhan_Pamuk
+Albert_Camus          influences                           Friedrich_Nietzsche
+Albert_Camus          schoolTradition                      Absurdism
+Albert_Camus          deathPlace                           ”Villeblevin, Yonne, Burgundy, France”@en
+Albert_Camus          deathDate                            ”1960-01-04”
+Albert_Camus          birthPlace                           ”Drean, El Taref, Algeria”@en
+Albert_Camus          birthDate                            ”1913-11-07
+Student49             telephone                            ”xxx-xxx-xxxx”
+Student49             memberOf                             http://www.Department3.University0.edu
+Student49             takesCourse                          Course32
+Student49             name                                 ”UndergraduateStudent49”
+Student49             emailAddress                         ”Student49@Department3.University0.edu”
+Student49             type                                 UndergraduateStudent
+Student10             telephone                            ”xxx-xxx-xxxx”
+Student10             memberOf                             http://www.Department3.University0.edu
+Student10             takesCourse                          Course20
+Student10             name                                 ”UndergraduateStudent10”
+Student10             emailAddress                         ”Student10@Department3.University0.edu”
+Student10             type                                 UndergraduateStudent
+SurgeryProcedure:236  hasCardiacValveAnatomyPathologyData  CardiacValveAnatomyPathologyData:70
+SurgeryProcedure:236  hasCardiacValveRepairProcedureData   CardiacValveRepairProcedureData:16
+SurgeryProcedure:236  SurgeryProcedureClass                ”cardiac valve”
+SurgeryProcedure:236  CardiacValveEtiology                 ”other”
+SurgeryProcedure:236  CardiacValveEtiology                 Event:184
+SurgeryProcedure:236  belongsToEvent                       Event:184
+SurgeryProcedure:236  SurgeryProcedureDescription          ”pulmonary valve repair”
+SurgeryProcedure:236  CardiacValveStatusologyData          native
+SurgeryProcedure:104  hasCardiacValveAnatomyPathologyData  CardiacValveAnatomyPathologyData:35
+SurgeryProcedure:104  SurgeryProcedureClass                ”cardiac valve”
+SurgeryProcedure:104  CardiacValveEtiology                 ”rheumatic”
+SurgeryProcedure:104  belongsToEvent                       Event:81
+SurgeryProcedure:104  SurgeryProcedureDescription          ”mitral va”
+
+Mapping to DNA Strands...
+
+Strand 1 [[1], ['Absurdism#', 'Albert_Camus#', 'Allen_Ginsberg#', 'CardiacValveAnatomyPathologyData:35#', 'CardiacValveAnatomyPathologyData:70#', 'CardiacValveEtiology#', 'CardiacValveRepairProcedureData:16#', 'CardiacValveStatusologyData#', 'Course20#', 'Course32#', 'Event:184#', 'Event:81#', 'Friedrich_Nietzsche#'], [2], [0]]
+Strand 2 [[2], ['Fyodor_Dostoyevsky#', 'John_Lennon#', 'Orhan_Pamuk#', 'Student10#', 'Student49#', 'SurgeryProcedure:104#', 'SurgeryProcedure:236#', 'SurgeryProcedureClass#', 'SurgeryProcedureDescription#', 'Template:Infobox philosopher#', 'Template:Infobox writer#', 'UndergraduateStudent#', 'belongsToEvent#', 'birthDate#'], [0], [0]]
+Strand 3 [[3], ['birthPlace#', 'deathDate#', 'deathPlace#', 'emailAddress#', 'hasCardiacValveAnatomyPathologyData#', 'hasCardiacValveRepairProcedureData#', 'http://www.Department3.University0.edu#', 'influenced#', 'influences#', 'memberOf#', 'name#', 'native#', 'occupation#', 'schoolTradition#', 'takesCourse#', 'telephone#', 'type#'], [5], [1]]
+Strand 4 [[4], ['wikiPageUsesTemplate#', '”1913-11-07#', '”1926-06-03”#', '”1960-01-04”#', '”1997-04-05”#', '”Drean, El Taref, Algeria”@en#', '”New York City, United States”@en#', '”Newark, New Jersey, United States”@en#', '”Student10@Department3.University0.edu”#', '”Student49@Department3.University0.edu”#'], [0], [0]]
+Strand 5 [[5], ['”UndergraduateStudent10”#', '”UndergraduateStudent49”#', '”Villeblevin, Yonne, Burgundy, France”@en#', '”Writer, poet”@en#', '”cardiac valve”#', '”mitral va”#', '”other”#', '”pulmonary valve repair”#', '”rheumatic”#', '”xxx-xxx-xxxx”#'], [0], [4]]
+Strand 6 [[6], ['0111111111111101111111111111101111111111111111101111111111011111111110'], [0], [0], [0], [0]]
+Strand 7 [[7], ['0011111111011111111000000000000001111110111111011111011111111000000000000000000000000000000000000000000000'], [0], [0], [0], [0]]
+Strand 8 [[8], ['0000001110010000000000000110110000110110110110110110110100110110110110010101101101101100000000000000000000'], [0], [0], [0], [0]]
+Strand 9 [[9], ['0100010100100101011010101010100000001010110000000001100000100000001010101010101010101010101011010101010110'], [0], [0], [0], [0]]
+Strand 10 [[10], [(27, 46), (28, 50), (29, 48), (30, 57), (35, 16), (36, 13), (41, 1), (45, 23), (27, 47), (28, 52), (29, 49), (30, 51), (35, 15), (36, 14), (40, 58), (45, 24), (31, 53), (37, 34), (38, 55), (42, 9), (43, 64), (44, 25), (31, 54), (37, 34), (38, 56), (42, 10), (43, 64), (44, 25), (6, 63), (21, 59), (22, 60), (26, 12), (32, 4), (6, 11), (6, 61), (8, 39), (21, 59), (22, 62), (26, 11), (32, 5), (33, 7)], [1], [41], [0], [0]]
+Strand 11 [[11], [(11, 20), (61, 20), (63, 19), (39, 20), (59, 19), (59, 20), (60, 19), (62, 20), (11, 20), (12, 19), (46, 2), (47, 3), (50, 2), (52, 3), (48, 2), (49, 3), (51, 3), (57, 2), (53, 17), (54, 18), (4, 19), (5, 20), (7, 20), (15, 3), (16, 2), (13, 2), (14, 3), (34, 17), (34, 18), (55, 17), (56, 18), (58, 3), (1, 2), (9, 17), (10, 18), (64, 17), (64, 18), (25, 17), (25, 18), (23, 2), (24, 3)], [1], [41], [0], [0]]
+Strand 12 [[12], [(2, 41), (19, 32), (20, 32), (20, 33), (17, 42), (18, 42), (20, 6), (20, 26), (19, 26), (2, 36), (3, 36), (3, 35), (2, 35), (2, 45), (3, 45), (17, 44), (18, 44), (17, 37), (18, 37), (20, 8), (2, 27), (3, 27), (2, 29), (3, 29), (2, 28), (3, 30), (3, 28), (17, 31), (18, 31), (17, 38), (18, 38), (2, 30), (3, 40), (19, 21), (20, 21), (19, 22), (20, 6), (20, 22), (19, 6), (17, 43), (18, 43)], [1], [41], [0], [0]]
+
+Mapping Queries to DNA Strands...
+
+............. Query Processing.............!
+======================getrange_s:asad bitmap 9 16
+Total Number of Strands Accessed: 6
+Strand 1 [[3], ['birthPlace#', 'deathDate#', 'deathPlace#', 'emailAddress#', 'hasCardiacValveAnatomyPathologyData#', 'hasCardiacValveRepairProcedureData#', 'http://www.Department3.University0.edu#', 'influenced#', 'influences#', 'memberOf#', 'name#', 'native#', 'occupation#', 'schoolTradition#', 'takesCourse#', 'telephone#', 'type#'], [5], [1]]
+Strand 2 [[1], ['Absurdism#', 'Albert_Camus#', 'Allen_Ginsberg#', 'CardiacValveAnatomyPathologyData:35#', 'CardiacValveAnatomyPathologyData:70#', 'CardiacValveEtiology#', 'CardiacValveRepairProcedureData:16#', 'CardiacValveStatusologyData#', 'Course20#', 'Course32#', 'Event:184#', 'Event:81#', 'Friedrich_Nietzsche#'], [2], [0]]
+Strand 3 [[6], ['0111111111111101111111111111101111111111111111101111111111011111111110'], [0], [0], [0], [0]]
+Strand 4 [[7], ['0011111111011111111000000000000001111110111111011111011111111000000000000000000000000000000000000000000000'], [0], [0], [0], [0]]
+Strand 5 [[10], [(27, 46), (28, 50), (29, 48), (30, 57), (35, 16), (36, 13), (41, 1), (45, 23), (27, 47), (28, 52), (29, 49), (30, 51), (35, 15), (36, 14), (40, 58), (45, 24), (31, 53), (37, 34), (38, 55), (42, 9), (43, 64), (44, 25), (31, 54), (37, 34), (38, 56), (42, 10), (43, 64), (44, 25), (6, 63), (21, 59), (22, 60), (26, 12), (32, 4), (6, 11), (6, 61), (8, 39), (21, 59), (22, 62), (26, 11), (32, 5), (33, 7)], [1], [41], [0], [0]]
+Strand 6 [[5], ['”UndergraduateStudent10”#', '”UndergraduateStudent49”#', '”Villeblevin, Yonne, Burgundy, France”@en#', '”Writer, poet”@en#', '”cardiac valve”#', '”mitral va”#', '”other”#', '”pulmonary valve repair”#', '”rheumatic”#', '”xxx-xxx-xxxx”#'], [0], [4]]
+(Object): ['”Writer, poet”@en#']
+SPO: Allen_Ginsberg occupation ”Writer, poet”@en#
+............. Query Processing.............!
+======================getrange_o:asad bitmap 1 1
+Total Number of Strands Accessed: 5
+Strand 1 [[3], ['birthPlace#', 'deathDate#', 'deathPlace#', 'emailAddress#', 'hasCardiacValveAnatomyPathologyData#', 'hasCardiacValveRepairProcedureData#', 'http://www.Department3.University0.edu#', 'influenced#', 'influences#', 'memberOf#', 'name#', 'native#', 'occupation#', 'schoolTradition#', 'takesCourse#', 'telephone#', 'type#'], [5], [1]]
+Strand 2 [[1], ['Absurdism#', 'Albert_Camus#', 'Allen_Ginsberg#', 'CardiacValveAnatomyPathologyData:35#', 'CardiacValveAnatomyPathologyData:70#', 'CardiacValveEtiology#', 'CardiacValveRepairProcedureData:16#', 'CardiacValveStatusologyData#', 'Course20#', 'Course32#', 'Event:184#', 'Event:81#', 'Friedrich_Nietzsche#'], [2], [0]]
+Strand 3 [[6], ['0111111111111101111111111111101111111111111111101111111111011111111110'], [0], [0], [0], [0]]
+Strand 4 [[9], ['0100010100100101011010101010100000001010110000000001100000100000001010101010101010101010101011010101010110'], [0], [0], [0], [0]]
+Strand 5 [[12], [(2, 41), (19, 32), (20, 32), (20, 33), (17, 42), (18, 42), (20, 6), (20, 26), (19, 26), (2, 36), (3, 36), (3, 35), (2, 35), (2, 45), (3, 45), (17, 44), (18, 44), (17, 37), (18, 37), (20, 8), (2, 27), (3, 27), (2, 29), (3, 29), (2, 28), (3, 30), (3, 28), (17, 31), (18, 31), (17, 38), (18, 38), (2, 30), (3, 40), (19, 21), (20, 21), (19, 22), (20, 6), (20, 22), (19, 6), (17, 43), (18, 43)], [1], [41], [0], [0]]
+(Predicate): ['schoolTradition#']
+SPO: Albert_Camus schoolTradition# Absurdism
+............. Query Processing.............!
+======================getrange_s:asad bitmap 23 28
+Total Number of Strands Accessed: 8
+Strand 1 [[3], ['birthPlace#', 'deathDate#', 'deathPlace#', 'emailAddress#', 'hasCardiacValveAnatomyPathologyData#', 'hasCardiacValveRepairProcedureData#', 'http://www.Department3.University0.edu#', 'influenced#', 'influences#', 'memberOf#', 'name#', 'native#', 'occupation#', 'schoolTradition#', 'takesCourse#', 'telephone#', 'type#'], [5], [1]]
+Strand 2 [[1], ['Absurdism#', 'Albert_Camus#', 'Allen_Ginsberg#', 'CardiacValveAnatomyPathologyData:35#', 'CardiacValveAnatomyPathologyData:70#', 'CardiacValveEtiology#', 'CardiacValveRepairProcedureData:16#', 'CardiacValveStatusologyData#', 'Course20#', 'Course32#', 'Event:184#', 'Event:81#', 'Friedrich_Nietzsche#'], [2], [0]]
+Strand 3 [[2], ['Fyodor_Dostoyevsky#', 'John_Lennon#', 'Orhan_Pamuk#', 'Student10#', 'Student49#', 'SurgeryProcedure:104#', 'SurgeryProcedure:236#', 'SurgeryProcedureClass#', 'SurgeryProcedureDescription#', 'Template:Infobox philosopher#', 'Template:Infobox writer#', 'UndergraduateStudent#', 'belongsToEvent#', 'birthDate#'], [0], [0]]
+Strand 4 [[6], ['0111111111111101111111111111101111111111111111101111111111011111111110'], [0], [0], [0], [0]]
+Strand 5 [[7], ['0011111111011111111000000000000001111110111111011111011111111000000000000000000000000000000000000000000000'], [0], [0], [0], [0]]
+Strand 6 [[10], [(27, 46), (28, 50), (29, 48), (30, 57), (35, 16), (36, 13), (41, 1), (45, 23), (27, 47), (28, 52), (29, 49), (30, 51), (35, 15), (36, 14), (40, 58), (45, 24), (31, 53), (37, 34), (38, 55), (42, 9), (43, 64), (44, 25), (31, 54), (37, 34), (38, 56), (42, 10), (43, 64), (44, 25), (6, 63), (21, 59), (22, 60), (26, 12), (32, 4), (6, 11), (6, 61), (8, 39), (21, 59), (22, 62), (26, 11), (32, 5), (33, 7)], [1], [41], [0], [0]]
+Strand 7 [[5], ['”UndergraduateStudent10”#', '”UndergraduateStudent49”#', '”Villeblevin, Yonne, Burgundy, France”@en#', '”Writer, poet”@en#', '”cardiac valve”#', '”mitral va”#', '”other”#', '”pulmonary valve repair”#', '”rheumatic”#', '”xxx-xxx-xxxx”#'], [0], [4]]
+Strand 8 [[4], ['wikiPageUsesTemplate#', '”1913-11-07#', '”1926-06-03”#', '”1960-01-04”#', '”1997-04-05”#', '”Drean, El Taref, Algeria”@en#', '”New York City, United States”@en#', '”Newark, New Jersey, United States”@en#', '”Student10@Department3.University0.edu”#', '”Student49@Department3.University0.edu”#'], [0], [0]]
+(Object): ['”Student49@Department3.University0.edu”#']
+SPO: Student49 emailAddress ”Student49@Department3.University0.edu”#
+............. Query Processing.............!
+======================getrange_s:asad bitmap 23 28
+Total Number of Strands Accessed: 8
+Strand 1 [[3], ['birthPlace#', 'deathDate#', 'deathPlace#', 'emailAddress#', 'hasCardiacValveAnatomyPathologyData#', 'hasCardiacValveRepairProcedureData#', 'http://www.Department3.University0.edu#', 'influenced#', 'influences#', 'memberOf#', 'name#', 'native#', 'occupation#', 'schoolTradition#', 'takesCourse#', 'telephone#', 'type#'], [5], [1]]
+Strand 2 [[1], ['Absurdism#', 'Albert_Camus#', 'Allen_Ginsberg#', 'CardiacValveAnatomyPathologyData:35#', 'CardiacValveAnatomyPathologyData:70#', 'CardiacValveEtiology#', 'CardiacValveRepairProcedureData:16#', 'CardiacValveStatusologyData#', 'Course20#', 'Course32#', 'Event:184#', 'Event:81#', 'Friedrich_Nietzsche#'], [2], [0]]
+Strand 3 [[2], ['Fyodor_Dostoyevsky#', 'John_Lennon#', 'Orhan_Pamuk#', 'Student10#', 'Student49#', 'SurgeryProcedure:104#', 'SurgeryProcedure:236#', 'SurgeryProcedureClass#', 'SurgeryProcedureDescription#', 'Template:Infobox philosopher#', 'Template:Infobox writer#', 'UndergraduateStudent#', 'belongsToEvent#', 'birthDate#'], [0], [0]]
+Strand 4 [[6], ['0111111111111101111111111111101111111111111111101111111111011111111110'], [0], [0], [0], [0]]
+Strand 5 [[7], ['0011111111011111111000000000000001111110111111011111011111111000000000000000000000000000000000000000000000'], [0], [0], [0], [0]]
+Strand 6 [[10], [(27, 46), (28, 50), (29, 48), (30, 57), (35, 16), (36, 13), (41, 1), (45, 23), (27, 47), (28, 52), (29, 49), (30, 51), (35, 15), (36, 14), (40, 58), (45, 24), (31, 53), (37, 34), (38, 55), (42, 9), (43, 64), (44, 25), (31, 54), (37, 34), (38, 56), (42, 10), (43, 64), (44, 25), (6, 63), (21, 59), (22, 60), (26, 12), (32, 4), (6, 11), (6, 61), (8, 39), (21, 59), (22, 62), (26, 11), (32, 5), (33, 7)], [1], [41], [0], [0]]
+Strand 7 [[5], ['”UndergraduateStudent10”#', '”UndergraduateStudent49”#', '”Villeblevin, Yonne, Burgundy, France”@en#', '”Writer, poet”@en#', '”cardiac valve”#', '”mitral va”#', '”other”#', '”pulmonary valve repair”#', '”rheumatic”#', '”xxx-xxx-xxxx”#'], [0], [4]]
+Strand 8 [[4], ['wikiPageUsesTemplate#', '”1913-11-07#', '”1926-06-03”#', '”1960-01-04”#', '”1997-04-05”#', '”Drean, El Taref, Algeria”@en#', '”New York City, United States”@en#', '”Newark, New Jersey, United States”@en#', '”Student10@Department3.University0.edu”#', '”Student49@Department3.University0.edu”#'], [0], [0]]
+(Predicate, Object): [('emailAddress#', '”Student49@Department3.University0.edu”#'), ('memberOf#', 'http://www.Department3.University0.edu#'), ('name#', '”UndergraduateStudent49”#'), ('takesCourse#', 'Course32#'), ('telephone#', '”xxx-xxx-xxxx”#'), ('type#', 'UndergraduateStudent#')]
+SPO: Student49 emailAddress# ”Student49@Department3.University0.edu”#
+SPO: Student49 memberOf# http://www.Department3.University0.edu#
+SPO: Student49 name# ”UndergraduateStudent49”#
+SPO: Student49 takesCourse# Course32#
+SPO: Student49 telephone# ”xxx-xxx-xxxx”#
+SPO: Student49 type# UndergraduateStudent#
+............. Query Processing.............!
+======================getrange_p:asad bitmap 36 37
+Total Number of Strands Accessed: 7
+Strand 1 [[3], ['birthPlace#', 'deathDate#', 'deathPlace#', 'emailAddress#', 'hasCardiacValveAnatomyPathologyData#', 'hasCardiacValveRepairProcedureData#', 'http://www.Department3.University0.edu#', 'influenced#', 'influences#', 'memberOf#', 'name#', 'native#', 'occupation#', 'schoolTradition#', 'takesCourse#', 'telephone#', 'type#'], [5], [1]]
+Strand 2 [[6], ['0111111111111101111111111111101111111111111111101111111111011111111110'], [0], [0], [0], [0]]
+Strand 3 [[8], ['0000001110010000000000000110110000110110110110110110110100110110110110010101101101101100000000000000000000'], [0], [0], [0], [0]]
+Strand 4 [[11], [(11, 20), (61, 20), (63, 19), (39, 20), (59, 19), (59, 20), (60, 19), (62, 20), (11, 20), (12, 19), (46, 2), (47, 3), (50, 2), (52, 3), (48, 2), (49, 3), (51, 3), (57, 2), (53, 17), (54, 18), (4, 19), (5, 20), (7, 20), (15, 3), (16, 2), (13, 2), (14, 3), (34, 17), (34, 18), (55, 17), (56, 18), (58, 3), (1, 2), (9, 17), (10, 18), (64, 17), (64, 18), (25, 17), (25, 18), (23, 2), (24, 3)], [1], [41], [0], [0]]
+Strand 5 [[1], ['Absurdism#', 'Albert_Camus#', 'Allen_Ginsberg#', 'CardiacValveAnatomyPathologyData:35#', 'CardiacValveAnatomyPathologyData:70#', 'CardiacValveEtiology#', 'CardiacValveRepairProcedureData:16#', 'CardiacValveStatusologyData#', 'Course20#', 'Course32#', 'Event:184#', 'Event:81#', 'Friedrich_Nietzsche#'], [2], [0]]
+Strand 6 [[2], ['Fyodor_Dostoyevsky#', 'John_Lennon#', 'Orhan_Pamuk#', 'Student10#', 'Student49#', 'SurgeryProcedure:104#', 'SurgeryProcedure:236#', 'SurgeryProcedureClass#', 'SurgeryProcedureDescription#', 'Template:Infobox philosopher#', 'Template:Infobox writer#', 'UndergraduateStudent#', 'belongsToEvent#', 'birthDate#'], [0], [0]]
+Strand 7 [[5], ['”UndergraduateStudent10”#', '”UndergraduateStudent49”#', '”Villeblevin, Yonne, Burgundy, France”@en#', '”Writer, poet”@en#', '”cardiac valve”#', '”mitral va”#', '”other”#', '”pulmonary valve repair”#', '”rheumatic”#', '”xxx-xxx-xxxx”#'], [0], [4]]
+(Subject, Object): [('Student10#', '”xxx-xxx-xxxx”#'), ('Student49#', '”xxx-xxx-xxxx”#')]
+SPO: Student10# telephone ”xxx-xxx-xxxx”#
+SPO: Student49# telephone ”xxx-xxx-xxxx”#
+............. Query Processing.............!
+======================getrange_o:asad bitmap 12 12
+Total Number of Strands Accessed: 6
+Strand 1 [[3], ['birthPlace#', 'deathDate#', 'deathPlace#', 'emailAddress#', 'hasCardiacValveAnatomyPathologyData#', 'hasCardiacValveRepairProcedureData#', 'http://www.Department3.University0.edu#', 'influenced#', 'influences#', 'memberOf#', 'name#', 'native#', 'occupation#', 'schoolTradition#', 'takesCourse#', 'telephone#', 'type#'], [5], [1]]
+Strand 2 [[1], ['Absurdism#', 'Albert_Camus#', 'Allen_Ginsberg#', 'CardiacValveAnatomyPathologyData:35#', 'CardiacValveAnatomyPathologyData:70#', 'CardiacValveEtiology#', 'CardiacValveRepairProcedureData:16#', 'CardiacValveStatusologyData#', 'Course20#', 'Course32#', 'Event:184#', 'Event:81#', 'Friedrich_Nietzsche#'], [2], [0]]
+Strand 3 [[2], ['Fyodor_Dostoyevsky#', 'John_Lennon#', 'Orhan_Pamuk#', 'Student10#', 'Student49#', 'SurgeryProcedure:104#', 'SurgeryProcedure:236#', 'SurgeryProcedureClass#', 'SurgeryProcedureDescription#', 'Template:Infobox philosopher#', 'Template:Infobox writer#', 'UndergraduateStudent#', 'belongsToEvent#', 'birthDate#'], [0], [0]]
+Strand 4 [[6], ['0111111111111101111111111111101111111111111111101111111111011111111110'], [0], [0], [0], [0]]
+Strand 5 [[9], ['0100010100100101011010101010100000001010110000000001100000100000001010101010101010101010101011010101010110'], [0], [0], [0], [0]]
+Strand 6 [[12], [(2, 41), (19, 32), (20, 32), (20, 33), (17, 42), (18, 42), (20, 6), (20, 26), (19, 26), (2, 36), (3, 36), (3, 35), (2, 35), (2, 45), (3, 45), (17, 44), (18, 44), (17, 37), (18, 37), (20, 8), (2, 27), (3, 27), (2, 29), (3, 29), (2, 28), (3, 30), (3, 28), (17, 31), (18, 31), (17, 38), (18, 38), (2, 30), (3, 40), (19, 21), (20, 21), (19, 22), (20, 6), (20, 22), (19, 6), (17, 43), (18, 43)], [1], [41], [0], [0]]
+(Subject, Predicate): [('Allen_Ginsberg#', 'influenced#')]
+SPO: Allen_Ginsberg# influenced# John_Lennon
+............. OUTPUT Graph 1 ..................
+Total number of strands......! 12
+Strands for query processing.! 5     min        |  8   max | 6 avg
+Total I/O per query execution! 6144  nucleotides|  12288 bits| 1536 Bytes| total(%) 50
+Per strand primer data size..! 96    nucleotides|  192  bits| 24 Bytes
+Per strand payload data size.! 1024   nucleotides|  2048 bits| 256 Bytes
+Total primers overhead(%)....! 8
+Total payload data(%)........! 92
+Primer addresses overhead....! 1152  nucleotides| 2304  bits| 288 Bytes| 0 KB
+Total graph data size........! 12288 nucleotides| 24576 bits| 3072 Bytes| 3 KB
+............. OUTPUT Graph 1 ..................
+
+Process finished with exit code 0
