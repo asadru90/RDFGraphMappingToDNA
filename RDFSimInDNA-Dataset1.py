@@ -879,9 +879,9 @@ def create_rdf_triple_table():
 
 if __name__ == '__main__':
 
+    int_size = 2
     byt_per_srd = 256
     elm_per_srd = byt_per_srd/4 - 1
-    int_size = 2
 
     print("\nCreating tuples from RDF triple table....\n")
     dt_tpl = create_rdf_triple_table()
@@ -899,16 +899,18 @@ if __name__ == '__main__':
         map_to_dna_strands(t_dic, t_spo, t_pos, t_osp, b_spo,
                            b_pos, b_osp, int_size, byt_per_srd)
 
-    print("\nMapping to DNA Strands...\n")
+    print("\n Total number of SPO:", len(dt_tpl))
+    print("\nMapping to DNA Strands...:", len(dic_srds))
     for i, x in enumerate(dic_srds):
         print("Strand", i + 1, dic_srds[x])
 
     print("\nMapping Queries to DNA Strands...\n")
     min_srds = 8024
     max_srds = 0
-    avg_srds = 0
+    sum_srds = 0
 
     tmp_dic_srds: dict[Any, Any] = {}
+    dup_dic_srds: dict[Any, Any] = {}
 
     qr_type = "SP?"
     sub_str = "Allen_Ginsberg"
@@ -921,12 +923,13 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
     tmp_cnt = len(tmp_dic_srds)
     if tmp_cnt > max_srds:
         max_srds = tmp_cnt
     if tmp_cnt < min_srds:
         min_srds = tmp_cnt
-    avg_srds = avg_srds + tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
     tmp_cnt = 0
 
     qr_type = "S?O"
@@ -941,12 +944,13 @@ if __name__ == '__main__':
                                 t_dic,
                                 tmp_dic_srds)
 
+    dup_dic_srds.update(tmp_dic_srds)
     tmp_cnt = len(tmp_dic_srds)
     if tmp_cnt > max_srds:
         max_srds = tmp_cnt
     if tmp_cnt < min_srds:
         min_srds = tmp_cnt
-    avg_srds = avg_srds + tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
     tmp_cnt = 0
 
     qr_type = "SP?"
@@ -960,12 +964,13 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
     tmp_cnt = len(tmp_dic_srds)
     if tmp_cnt > max_srds:
         max_srds = tmp_cnt
     if tmp_cnt < min_srds:
         min_srds = tmp_cnt
-    avg_srds = avg_srds + tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
     tmp_cnt = 0
 
     qr_type = "S??"
@@ -979,12 +984,13 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
     tmp_cnt = len(tmp_dic_srds)
     if tmp_cnt > max_srds:
         max_srds = tmp_cnt
     if tmp_cnt < min_srds:
         min_srds = tmp_cnt
-    avg_srds = avg_srds + tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
     tmp_cnt = 0
 
     qr_type = "?P?"
@@ -998,12 +1004,13 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
     tmp_cnt = len(tmp_dic_srds)
     if tmp_cnt > max_srds:
         max_srds = tmp_cnt
     if tmp_cnt < min_srds:
         min_srds = tmp_cnt
-    avg_srds = avg_srds + tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
     tmp_cnt = 0
 
     qr_type = "??O"
@@ -1017,22 +1024,27 @@ if __name__ == '__main__':
                                 dic_mid_addr,
                                 t_dic,
                                 tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
     tmp_cnt = len(tmp_dic_srds)
     if tmp_cnt > max_srds:
         max_srds = tmp_cnt
     if tmp_cnt < min_srds:
         min_srds = tmp_cnt
-    avg_srds = avg_srds + tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
     tmp_cnt = 0
 
     print("............. OUTPUT Graph 1 ..................")
-    avg_srds = int(avg_srds / 6)
+    avg_srds = int(sum_srds / 6)
     io_srd = avg_srds * byt_per_srd * 4
     t_srds = len(dic_srds)
     gr_size = t_srds * byt_per_srd * 4
     pm_ovh = t_srds * 96
     pc_ovh = int((pm_ovh / (gr_size + pm_ovh)) * 100)
-    print("Total number of strands......!", t_srds)
+    print("\nTotal number of SPO:", len(dt_tpl))
+    print("Total number of mapping strands......!", t_srds)
+    print("Total number of queries executed......!", 6)
+    print("Total number of accessed strands in all queries ......!", sum_srds)
+    print("Strands accessed after removing duplicate strands for all queries......!", len(dup_dic_srds))
     print("Strands for query processing.!", min_srds,
           "    min        | ", max_srds, "  max |", avg_srds,
           "avg")
@@ -1040,7 +1052,7 @@ if __name__ == '__main__':
           io_srd * 2, "bits|", int(io_srd / 4), "Bytes|", "total(%)",
           int((io_srd/gr_size)*100))
     print("Per strand primer data size..!", 96, "   nucleotides| ",
-          96 * 2, " bits|", int(96/4), "Bytes")
+          96 * 2, " bits|", int(byt_per_srd/4), "Bytes")
     print("Per strand payload data size.!",  byt_per_srd * 4, "  nucleotides| ",
           byt_per_srd * 8, "bits|", byt_per_srd, "Bytes")
     print("Total primers overhead(%)....!", pc_ovh)
