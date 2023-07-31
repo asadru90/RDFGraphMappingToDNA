@@ -7,6 +7,10 @@ from tabulate import tabulate
 from operator import itemgetter
 from functools import reduce
 
+from rdflib import Graph
+from rdflib.namespace import RDF
+import csv
+
 
 def decode_dna_strand(sd_data, dc_type):
     if dc_type == "dictionary":
@@ -657,8 +661,8 @@ def compose_dna_strand(dic_srds, srd_cnt, high_val, lst_srds, srd_type):
         elif srd_type == "bitmap":
             dic_srds[srd_cnt] = [[srd_cnt], lst_srds[j - 1], [prv_zero],
                                  [prv_ones], [nxt_adr], [prv_adr]]
-            prv_zero = get_count(str(lst_srds[j - 1][0]), '0')
-            prv_ones = get_count(str(lst_srds[j - 1][0]), '1')
+            prv_zero = prv_zero + get_count(str(lst_srds[j - 1][0]), '0')
+            prv_ones = prv_ones + get_count(str(lst_srds[j - 1][0]), '1')
         else:
             dic_srds[srd_cnt] = [
                 [srd_cnt], lst_srds[j - 1], [cnt_int],
@@ -695,6 +699,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
             sub_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
                                        dic_srds, tmp_dic_srds)
             ls_out.append(sub_str)
+
         print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
 
     elif qr_type == "S?O":
@@ -724,11 +729,12 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                       dic_srds, tmp_dic_srds)
         s_idx, e_idx = get_range_using_bitmap_s(sub_id, dic_mid_addr,
                                                 dic_srds, tmp_dic_srds)
+
         obj_ids = get_ids_using_lookup_spo(s_idx, e_idx, prd_id,
                                            dic_mid_addr, dic_srds,
                                            elm_per_srd, tmp_dic_srds)
-        for sid in obj_ids:
-            obj_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
+        for oid in obj_ids:
+            obj_str = map_id_to_rdf_string(oid, cnt_dic_srds, dic_mid_addr,
                                            dic_srds, tmp_dic_srds)
             ls_out.append(obj_str)
         print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
@@ -777,7 +783,6 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
 
         s_idx, e_idx = get_range_using_bitmap_s(sub_id, dic_mid_addr,
                                                 dic_srds, tmp_dic_srds)
-
 
         sub_ids = get_ids_using_lookup_spo(s_idx, e_idx, 0,
                                            dic_mid_addr, dic_srds,
@@ -876,6 +881,80 @@ def create_rdf_triple_table():
     print(tabulate(data, headers=col_names))
     return data
 
+def create_rdf_triple_table2():
+    # create data
+    data = [['<http://orcid.org/0000-0002-3178-0201>', 'dcterm:created', '2014-12-22T22:25:56.900Z^^xsd:dateTime'],
+            ['<http://orcid.org/0000-0002-3178-0201>', '<http://www.loc.gov/mads/rdf/v1#hasAffiliation>', '<http://www.grid.ac/institutes/grid.152326.1>'],
+            ['<http://orcid.org/0000-0002-3178-0201>', 'rdf:type', 'foaf:Person'],
+            ['<http://orcid.org/0000-0002-3178-0201>', 'rdfs:label', 'Julian Hillyer'],
+            ['<http://orcid.org/0000-0002-3178-0201>', 'foaf:familyName', 'Hillyer'],
+            ['<http://orcid.org/0000-0002-3178-0201>', 'foaf:givenName', 'Julian'],
+            ['<http://orcid.org/0000-0002-3178-0201>', 'dcterm:modified', '2017-08-11T21:51:34.631Z^^xsd:dateTime'],
+            ['<http://orcid.org/0000-0003-2360-0589>', 'dcterm:created', '2017-05-24T13:47:09.768Z^^xsd:dateTime'],
+            ['<http://orcid.org/0000-0003-2360-0589>', '<http://www.loc.gov/mads/rdf/v1#hasAffiliation>', '<http://www.grid.ac/institutes/grid.152326.1>'],
+            ['<http://orcid.org/0000-0003-2360-0589>', 'rdf:type', 'foaf:Person'],
+            ['<http://orcid.org/0000-0003-2360-0589>', 'rdfs:label', 'Shaul Kelner'],
+            ['<http://orcid.org/0000-0003-2360-0589>', 'foaf:familyName', 'Kelner'],
+            ['<http://orcid.org/0000-0003-2360-0589>', 'foaf:givenName', 'Shaul'],
+            ['<http://orcid.org/0000-0003-2360-0589>', 'dcterm:modified', '2017-05-24T13:56:27.187Z^^xsd:dateTime'],
+            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'dcterm:creator', '<http://orcid.org/0000-0003-2360-0589>'],
+            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'dcterm:date', '2015-12-30'],
+            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', '<http://purl.org/ontology/bibo/pageEnd>', '4'],
+            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', '<http://purl.org/ontology/bibo/pageStart>', '1'],
+            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'rdf:type', 'foaf:Document'],
+            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'rdfs:label', 'Jews in the United States@en'],
+            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'dcterm:title', 'Jews in the United States@en'],
+            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'dcterm:creator', '<http://orcid.org/0000-0002-3178-0201>'],
+            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'dcterm:date', '2016-05'],
+            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', '<http://purl.org/ontology/bibo/pageEnd>', '118'],
+            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', '<http://purl.org/ontology/bibo/pageStart>', '102'],
+            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', '<http://purl.org/ontology/bibo/volume>', '58'],
+            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'rdf:type', 'foaf:Document'],
+            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'rdfs:label', 'Insect immunology and hematopoiesis@en'],
+            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'dcterm:title', 'Insect immunology and hematopoiesis@en'],
+            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', 'dcterm:creator', '<http://orcid.org/0000-0002-3178-0201>'],
+            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', 'dcterm:date', '2017-08'],
+            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', '<http://purl.org/ontology/bibo/pageEnd>', '56'],
+            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', '<http://purl.org/ontology/bibo/pageStart>', '47'],
+            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', '<http://purl.org/ontology/bibo/volume>', '101'],
+            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', 'rdf:type', 'foaf:Document'],
+            ['<http://dx.doi.org/10.1177/1536504211418463>', 'dcterm:creator', '<http://orcid.org/0000-0003-2360-0589>'],
+            ['<http://dx.doi.org/10.1177/1536504211418463>', 'dcterm:date', '2011-08'],
+            ['<http://dx.doi.org/10.1177/1536504211418463>', '<http://purl.org/ontology/bibo/pageEnd>', '73'],
+            ['<http://dx.doi.org/10.1177/1536504211418463>', '<http://purl.org/ontology/bibo/pageStart>', '72'],
+            ['<http://dx.doi.org/10.1177/1536504211418463>', '<http://purl.org/ontology/bibo/volume>', '10'],
+            ['<http://dx.doi.org/10.1177/1536504211418463>', 'rdf:type', 'foaf:Document'],
+            ['<http://dx.doi.org/10.1177/1536504211418463>', 'rdfs:label', 'Let My People Go@en'],
+            ['<http://dx.doi.org/10.1177/1536504211418463>', 'dcterm:title', 'Let My People Go@en'],
+            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'dcterm:creator', '<http://orcid.org/0000-0003-2360-0589>'],
+            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'dcterm:date', '2014'],
+            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', '<http://purl.org/ontology/bibo/pageEnd>', '22'],
+            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', '<http://purl.org/ontology/bibo/pageStart>', '17'],
+            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', '<http://purl.org/ontology/bibo/volume>', '98'],
+            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'rdf:type', 'foaf:Document'],
+            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'rdfs:label', 'Ethnographers and History@en'],
+            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'dcterm:title', 'Ethnographers and History@en'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.w3.org/2003/01/geo/wgs84_pos#lat>', '36.144937^^xsd:float'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.w3.org/2003/01/geo/wgs84_pos#long>', '-86.802687^^xsd:float'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/cityName>', 'Nashville'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/countryCode>', 'US'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/countryName>', 'United States'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/establishedYear>', '1873^^xsd:gYear'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/hasWikidataId>', '<http://www.wikidata.org/entity/Q29052>'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/wikipediaPage>', '<http://en.wikipedia.org/wiki/Vanderbilt_University>'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', 'rdf:type', '<http://www.grid.ac/ontology/Education>'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', 'rdf:type', 'foaf:Organization'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', 'rdfs:label', 'Vanderbilt University'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', 'foaf:homepage', '<http://www.vanderbilt.edu/>'],
+            ['<http://www.grid.ac/institutes/grid.152326.1>', 'skos:altLabel', 'Vandy']
+            ]
+    # define header names
+    col_names = ["Subject", "Property", "Object"]
+
+    # display table
+    print(tabulate(data, headers=col_names))
+    return data
+
 
 if __name__ == '__main__':
 
@@ -885,6 +964,20 @@ if __name__ == '__main__':
 
     print("\nCreating tuples from RDF triple table....\n")
     dt_tpl = create_rdf_triple_table()
+    dt_tpl2 = create_rdf_triple_table2()
+    dt_tpl.extend(dt_tpl2)
+
+    with open('C:\\Users\\admin\\Desktop\\testRDF\\dataset5_films.txt', 'r') as read_obj:
+        csv_reader = csv.reader(read_obj, delimiter=' ')
+        tmp_row = []
+        for row in csv_reader:
+            row = ",".join(row).split("\t")
+            row = " ".join(row).split(",")
+            if row[2].find("XMLSchema#dateTime") == -1:
+                if len(row[0]) > byt_per_srd or len(row[1]) > byt_per_srd or len(row[2]) > byt_per_srd:
+                    exit()
+                dt_tpl.append([row[0], row[1], row[2]])
+                print(row[0], row[1], row[2])
 
     t_dic, t_rdf = \
         convert_id_based_triple_storage(dt_tpl)
