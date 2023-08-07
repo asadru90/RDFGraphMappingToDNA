@@ -1,6 +1,7 @@
 import csv
 import re
 import math
+import pprint
 from typing import Dict, Any
 
 from tabulate import tabulate
@@ -956,10 +957,23 @@ def create_rdf_triple_table2():
     return data
 
 
+def fileWrite(filePath, fileName, fileExt):
+    g = Graph()
+    print("parsing start!")
+    fileParseName = filePath + fileName + fileExt
+    g.parse(fileParseName)
+    print("parsing done!")
+    v = g.serialize(format="ntriples")
+    print("serialization done!")
+    print(v)
+    with open(filePath + fileName + ".txt", "a", encoding="utf-8") as f:
+        f.write(v)
+
+
 if __name__ == '__main__':
 
-    int_size = 2
-    byt_per_srd = 256
+    int_size = 4
+    byt_per_srd = 96
     elm_per_srd = byt_per_srd/4 - 1
 
     print("\nCreating tuples from RDF triple table....\n")
@@ -967,16 +981,21 @@ if __name__ == '__main__':
     dt_tpl2 = create_rdf_triple_table2()
     dt_tpl.extend(dt_tpl2)
 
-    with open('C:\\Users\\admin\\Desktop\\testRDF\\dataset5_films.txt', 'r') as read_obj:
+    filePath = "C:\\Users\\admin\Desktop\\testRDF\\testDataset22\\British\\"
+    fileName = "BNBLODC_sample"
+    #fileWrite(filePath, fileName, ".rdf")
+
+    with open(filePath + fileName + '.txt', 'r', encoding="utf-8") as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=' ')
         tmp_row = []
         for row in csv_reader:
             row = ",".join(row).split("\t")
             row = " ".join(row).split(",")
             if row[2].find("XMLSchema#dateTime") == -1:
-                if len(row[0]) > byt_per_srd or len(row[1]) > byt_per_srd or len(row[2]) > byt_per_srd:
-                    exit()
-                dt_tpl.append([row[0], row[1], row[2]])
+                if len(row[0]) <= byt_per_srd \
+                        and len(row[1]) <= byt_per_srd \
+                        and len(row[2]) <= byt_per_srd:
+                    dt_tpl.append([row[0], row[1], row[2]])
                 print(row[0], row[1], row[2])
 
     t_dic, t_rdf = \
@@ -1143,7 +1162,7 @@ if __name__ == '__main__':
           "avg")
     print("Total I/O per query execution!", io_srd, " nucleotides| ",
           io_srd * 2, "bits|", int(io_srd / 4), "Bytes|", "total(%)",
-          int((io_srd/gr_size)*100))
+          float((io_srd/gr_size)*100))
     print("Per strand primer data size..!", 96, "   nucleotides| ",
           96 * 2, " bits|", int(byt_per_srd/4), "Bytes")
     print("Per strand payload data size.!",  byt_per_srd * 4, "  nucleotides| ",
