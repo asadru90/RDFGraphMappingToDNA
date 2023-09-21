@@ -8,8 +8,6 @@ from tabulate import tabulate
 from operator import itemgetter
 from functools import reduce
 
-from rdflib import Graph
-from rdflib.namespace import RDF
 import csv
 
 
@@ -547,6 +545,7 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     tmp_srd = []
     dic_bm = "0"
     srd_cnt = 1
+    idx_str_cnt = 0
     for nxt_str in t_dic:
         nxt_str = nxt_str + "#"
         len_str = reduce(lambda count, i: count + len(i), tmp_srd, 0)
@@ -578,6 +577,7 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "bitmap")
     dic_adrs["bitmap_dic"] = mid
+    print("bitmap_dic:strands count", high_val-1)
 
     lst_srds.clear()
     b_list = [b_spo[k:k + b_size] for k in range(0, len(b_spo), b_size)]
@@ -587,6 +587,7 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "bitmap")
     dic_adrs["bitmap_spo"] = mid
+    print("bitmap_spo:strands count", high_val-1)
 
     lst_srds.clear()
     b_list = [b_pos[l:l + b_size] for l in range(0, len(b_pos), b_size)]
@@ -596,6 +597,7 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "bitmap")
     dic_adrs["bitmap_pos"] = mid
+    print("bitmap_pos:strands count", high_val-1)
 
     lst_srds.clear()
     b_list = [b_osp[m:m + b_size] for m in range(0, len(b_osp), b_size)]
@@ -605,6 +607,8 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "bitmap")
     dic_adrs["bitmap_osp"] = mid
+    print("bitmap_osp:strands count", high_val-1)
+    idx_str_cnt = high_val - 1
 
     # Mapping all index table (spo, pos and osp)
     # into as many dna strands as needed
@@ -617,6 +621,7 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "index")
     dic_adrs["index_spo"] = mid
+    idx_str_cnt = 2 * (idx_str_cnt + high_val - 1)
 
     lst_srds.clear()
     b_list = [t_pos[o:o + b_size] for o in range(0, len(t_pos), b_size)]
@@ -626,6 +631,7 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "index")
     dic_adrs["index_pos"] = mid
+    print("index_pos:strands count", high_val - 1)
 
     lst_srds.clear()
     b_list = [t_osp[p:p + b_size] for p in range(0, len(t_osp), b_size)]
@@ -635,8 +641,9 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "index")
     dic_adrs["index_osp"] = mid
+    print("index_osp:strands count", high_val - 1)
 
-    return dic_srds_cnt, dic_srds, dic_adrs
+    return dic_srds_cnt, dic_srds, dic_adrs, idx_str_cnt
 
 
 def compose_dna_strand(dic_srds, srd_cnt, high_val, lst_srds, srd_type):
@@ -800,8 +807,8 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
 
 def print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds):
     print("Total Number of Strands Accessed:", len(tmp_dic_srds))
-    for idx, str_idx in enumerate(tmp_dic_srds):
-        print("Strand", idx + 1, tmp_dic_srds[str_idx])
+    #for idx, str_idx in enumerate(tmp_dic_srds):
+    #    print("Strand", idx + 1, tmp_dic_srds[str_idx])
     if qr_type == "?PO":
         print("(Subject)", ls_out)
         for out in ls_out:
@@ -973,17 +980,18 @@ def fileWrite(filePath, fileName, fileExt):
 if __name__ == '__main__':
 
     int_size = 4
-    byt_per_srd = 96
+    byt_per_srd = 256
     elm_per_srd = byt_per_srd/4 - 1
+    pr_len = 4 * 32
 
     print("\nCreating tuples from RDF triple table....\n")
     dt_tpl = create_rdf_triple_table()
     dt_tpl2 = create_rdf_triple_table2()
     dt_tpl.extend(dt_tpl2)
 
-    filePath = "C:\\Users\\admin\Desktop\\testRDF\\testDataset22\\British\\"
-    fileName = "BNBLODC_sample"
-    #fileWrite(filePath, fileName, ".rdf")
+    filePath = "C:\\Users\\admin\\Desktop\\testRDF\\testDataset11-Yago\\dataset4_ok\\"
+    fileName = "yagoWordnetIds"
+    #fileWrite(filePath, fileName, ".ttl")
 
     with open(filePath + fileName + '.txt', 'r', encoding="utf-8") as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=' ')
@@ -1007,7 +1015,7 @@ if __name__ == '__main__':
     t_spo, t_pos, t_osp, b_spo, b_pos, b_osp = \
         generate_index_bitmaps(t_spo, t_pos, t_osp, len(t_dic))
 
-    cnt_dic_srds, dic_srds, dic_mid_addr = \
+    cnt_dic_srds, dic_srds, dic_mid_addr, idx_str_cnt = \
         map_to_dna_strands(t_dic, t_spo, t_pos, t_osp, b_spo,
                            b_pos, b_osp, int_size, byt_per_srd)
 
@@ -1150,10 +1158,11 @@ if __name__ == '__main__':
     io_srd = avg_srds * byt_per_srd * 4
     t_srds = len(dic_srds)
     gr_size = t_srds * byt_per_srd * 4
-    pm_ovh = t_srds * 96
+    pm_ovh = t_srds * pr_len
     pc_ovh = int((pm_ovh / (gr_size + pm_ovh)) * 100)
     print("\nTotal number of SPO:", len(dt_tpl))
     print("Total number of mapping strands......!", t_srds)
+    print("Total number of extra index+bitmap strands......!", idx_str_cnt,"=",(idx_str_cnt/t_srds)*100,"%")
     print("Total number of queries executed......!", 6)
     print("Total number of accessed strands in all queries ......!", sum_srds)
     print("Strands accessed after removing duplicate strands for all queries......!", len(dup_dic_srds))
