@@ -1011,7 +1011,7 @@ def fileWrite(filePath, fileName, fileExt):
 
 if __name__ == '__main__':
 
-    int_size = 2
+    int_size = 4
     byt_per_srd = 256
     elm_per_srd = byt_per_srd/4 - 1
     pr_len = 4 * 32
@@ -1022,7 +1022,7 @@ if __name__ == '__main__':
     dt_tpl.extend(dt_tpl2)
 
     filePath = "C:\\Users\\admin\\Desktop\\testRDF\\yourFilePath\\"
-    fileName = "yagoSchema"
+    fileName = "yagoWordnetIds"
     #fileWrite(filePath, fileName, ".ttl")
 
     with open(filePath + fileName + '.txt', 'r', encoding="utf-8") as read_obj:
