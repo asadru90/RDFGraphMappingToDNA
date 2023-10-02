@@ -1,0 +1,68 @@
+/*************************************************************/
+set these parameter values to get the following results
+at the line numbers 1014 and 1015 in the python code file.
+
+int_size 	= 4
+byt_per_srd 	= 256
+
+and at line number 1025 set file name in the python code file.
+
+fileName = "knowledge-organizations_202307" 
+/************************************************************/
+
+Mapping Queries to DNA Strands...
+
+............. Query Processing.............!
+======================getrange_s:asad bitmap 71609 71616
+Total Number of Strands Accessed: 43
+(Object): ['”Writer, poet”@en#']
+SPO: Allen_Ginsberg occupation ”Writer, poet”@en#
+............. Query Processing.............!
+======================getrange_o:asad bitmap 66574 66574
+Total Number of Strands Accessed: 44
+(Predicate): ['schoolTradition#']
+SPO: Albert_Camus schoolTradition# Absurdism
+............. Query Processing.............!
+======================getrange_s:asad bitmap 71623 71628
+Total Number of Strands Accessed: 43
+(Object): ['”Student49@Department3.University0.edu”#']
+SPO: Student49 emailAddress ”Student49@Department3.University0.edu”#
+............. Query Processing.............!
+======================getrange_s:asad bitmap 71623 71628
+Total Number of Strands Accessed: 60
+(Predicate, Object): [('emailAddress#', '”Student49@Department3.University0.edu”#'), ('memberOf#', 'http://www.Department3.University0.edu#'), ('name#', '”UndergraduateStudent49”#'), ('takesCourse#', 'Course32#'), ('telephone#', '”xxx-xxx-xxxx”#'), ('type#', 'UndergraduateStudent#')]
+SPO: Student49 emailAddress# ”Student49@Department3.University0.edu”#
+SPO: Student49 memberOf# http://www.Department3.University0.edu#
+SPO: Student49 name# ”UndergraduateStudent49”#
+SPO: Student49 takesCourse# Course32#
+SPO: Student49 telephone# ”xxx-xxx-xxxx”#
+SPO: Student49 type# UndergraduateStudent#
+............. Query Processing.............!
+======================getrange_p:asad bitmap 123536 123537
+Total Number of Strands Accessed: 44
+(Subject, Object): [('Student10#', '”xxx-xxx-xxxx”#'), ('Student49#', '”xxx-xxx-xxxx”#')]
+SPO: Student10# telephone ”xxx-xxx-xxxx”#
+SPO: Student49# telephone ”xxx-xxx-xxxx”#
+............. Query Processing.............!
+======================getrange_o:asad bitmap 81804 81804
+Total Number of Strands Accessed: 49
+(Subject, Predicate): [('Allen_Ginsberg#', 'influenced#')]
+SPO: Allen_Ginsberg# influenced# John_Lennon
+
+.................................. OUTPUT Graph ................................
+Integer Size for the graph ......................................: Int size  = 4
+Total number of SPO..............................................: SPO#      = 123541
+Total number of mapping strands..................................: Strands#  = 15234
+Total indexing overhead .........................................: Overhead  = 53.30182486543259 %
+Total I/O per query execution..: 48128  nucleotides|  96256 Bytes| Output(%) = 0.30852041486149406
+Total number of extra index+bitmap strands.......................: 8120
+Total number of queries executed.................................: 6
+Total number of accessed strands in all queries .................: 283
+Strands accessed after removing duplicate strands for all queries: 122
+Strands for query processing...: 43   min |  60   max | 47 avg
+Per strand primer data size..! 96  nucleotides|  192  bits| 64 Bytes
+Per strand payload data size.! 1024  nucleotides|  2048 bits| 256 Bytes
+Total primers overhead(%)....! 11
+Total payload data(%)........! 89
+Primer addresses overhead....! 1949952  nucleotides| 487488 Bytes| 476 KB
+................................ OUTPUT Graph .................................
