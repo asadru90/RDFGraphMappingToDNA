@@ -343,15 +343,26 @@ def get_ids_using_lookup_pos(st_idx, ed_idx, obj_id, dic_mid_addr,
                 sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
                 decode_dna_strand(sd_data, "index_table")
-            if ed_idx_n > prv_end:
-                sd_addr = ns_addr
-            elif st_idx_n >= prv_start and ed_idx_n <= prv_end:
+            if st_idx_n >= prv_start and ed_idx_n <= prv_end:
                 is_found = True
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
                 temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, obj_id)
                 ls_sub_ids.extend(temp_list)
                 temp_list.clear()
+            elif prv_start <= st_idx_n <= prv_end:
+                st_idx_temp = prv_end + 1
+                ed_idx_temp = ed_idx_n
+                st_idx_n = st_idx_n - prv_start + 1
+                ed_idx_n = ed_idx_n - prv_start + 1
+                temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, obj_id)
+                sd_addr = dic_mid_addr["index_pos"]
+                st_idx_n = st_idx_temp
+                ed_idx_n = ed_idx_temp
+                ls_sub_ids.extend(temp_list)
+                temp_list.clear()
+            elif ed_idx_n > prv_end:
+                sd_addr = ns_addr
             else:
                 sd_addr = ps_addr
     return ls_sub_ids
@@ -375,15 +386,26 @@ def get_ids_using_lookup_spo(st_idx, ed_idx, prd_id, dic_mid_addr,
                 sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
                 decode_dna_strand(sd_data, "index_table")
-            if ed_idx_n > prv_end:
-                sd_addr = ns_addr
-            elif st_idx_n >= prv_start and ed_idx_n <= prv_end:
+            if st_idx_n >= prv_start and ed_idx_n <= prv_end:
                 is_found = True
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
                 temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, prd_id)
                 ls_obj_ids.extend(temp_list)
                 temp_list.clear()
+            elif prv_start <= st_idx_n <= prv_end:
+                st_idx_temp = prv_end + 1
+                ed_idx_temp = ed_idx_n
+                st_idx_n = st_idx_n - prv_start + 1
+                ed_idx_n = ed_idx_n - prv_start + 1
+                temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, prd_id)
+                sd_addr = dic_mid_addr["index_spo"]
+                st_idx_n = st_idx_temp
+                ed_idx_n = ed_idx_temp
+                ls_obj_ids.extend(temp_list)
+                temp_list.clear()
+            elif ed_idx_n > prv_end:
+                sd_addr = ns_addr
             else:
                 sd_addr = ps_addr
     return ls_obj_ids
@@ -407,15 +429,26 @@ def get_ids_using_lookup_osp(st_idx, ed_idx, sub_id, dic_mid_addr,
                 sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
                 decode_dna_strand(sd_data, "index_table")
-            if ed_idx_n > prv_end:
-                sd_addr = ns_addr
-            elif st_idx_n >= prv_start and ed_idx_n <= prv_end:
+            if st_idx_n >= prv_start and ed_idx_n <= prv_end:
                 is_found = True
                 st_idx_n = st_idx_n - prv_start + 1
                 ed_idx_n = ed_idx_n - prv_start + 1
                 temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, sub_id)
                 ls_prd_ids.extend(temp_list)
                 temp_list.clear()
+            elif prv_start <= st_idx_n <= prv_end:
+                st_idx_temp = prv_end + 1
+                ed_idx_temp = ed_idx_n
+                st_idx_n = st_idx_n - prv_start + 1
+                ed_idx_n = ed_idx_n - prv_start + 1
+                temp_list = get_matching_ids(pl_data, st_idx_n, ed_idx_n, sub_id)
+                sd_addr = dic_mid_addr["index_osp"]
+                st_idx_n = st_idx_temp
+                ed_idx_n = ed_idx_temp
+                ls_prd_ids.extend(temp_list)
+                temp_list.clear()
+            elif ed_idx_n > prv_end:
+                sd_addr = ns_addr
             else:
                 sd_addr = ps_addr
     return ls_prd_ids
@@ -737,7 +770,6 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                       dic_srds, tmp_dic_srds)
         s_idx, e_idx = get_range_using_bitmap_s(sub_id, dic_mid_addr,
                                                 dic_srds, tmp_dic_srds)
-
         obj_ids = get_ids_using_lookup_spo(s_idx, e_idx, prd_id,
                                            dic_mid_addr, dic_srds,
                                            elm_per_srd, tmp_dic_srds)
@@ -979,7 +1011,7 @@ def fileWrite(filePath, fileName, fileExt):
 
 if __name__ == '__main__':
 
-    int_size = 4
+    int_size = 2
     byt_per_srd = 256
     elm_per_srd = byt_per_srd/4 - 1
     pr_len = 4 * 32
@@ -989,8 +1021,8 @@ if __name__ == '__main__':
     dt_tpl2 = create_rdf_triple_table2()
     dt_tpl.extend(dt_tpl2)
 
-    filePath = "C:\\Users\\admin\\Desktop\\testRDF\\testDataset11-Yago\\dataset4_ok\\"
-    fileName = "yagoWordnetIds"
+    filePath = "C:\\Users\\admin\\Desktop\\testRDF\\testDataset11-Yago\\dataset0_ok\\"
+    fileName = "yagoSchema"
     #fileWrite(filePath, fileName, ".ttl")
 
     with open(filePath + fileName + '.txt', 'r', encoding="utf-8") as read_obj:
@@ -1153,35 +1185,37 @@ if __name__ == '__main__':
     sum_srds = sum_srds + tmp_cnt
     tmp_cnt = 0
 
-    print("............. OUTPUT Graph 1 ..................")
+    print("\n.................................. OUTPUT Graph ................................")
     avg_srds = int(sum_srds / 6)
     io_srd = avg_srds * byt_per_srd * 4
     t_srds = len(dic_srds)
     gr_size = t_srds * byt_per_srd * 4
     pm_ovh = t_srds * pr_len
     pc_ovh = int((pm_ovh / (gr_size + pm_ovh)) * 100)
-    print("\nTotal number of SPO:", len(dt_tpl))
-    print("Total number of mapping strands......!", t_srds)
-    print("Total number of extra index+bitmap strands......!", idx_str_cnt,"=",(idx_str_cnt/t_srds)*100,"%")
-    print("Total number of queries executed......!", 6)
-    print("Total number of accessed strands in all queries ......!", sum_srds)
-    print("Strands accessed after removing duplicate strands for all queries......!", len(dup_dic_srds))
-    print("Strands for query processing.!", min_srds,
-          "    min        | ", max_srds, "  max |", avg_srds,
+    print("Integer Size for the graph ......................................: Int size  =", int_size)
+    print("Total number of SPO..............................................: SPO#      =", len(dt_tpl))
+    print("Total number of mapping strands..................................: Strands#  =", t_srds)
+    print("Total indexing overhead .........................................: Overhead  =", (idx_str_cnt/t_srds)*100,"%")
+    print("Total I/O per query execution..:", io_srd, " nucleotides| ",
+          io_srd * 2, "Bytes|", "Output(%) =",
+          float((io_srd / gr_size) * 100))
+    print("Total number of extra index+bitmap strands.......................:", idx_str_cnt)
+    print("Total number of queries executed.................................:", 6)
+    print("Total number of accessed strands in all queries .................:", sum_srds)
+    print("Strands accessed after removing duplicate strands for all queries:", len(dup_dic_srds))
+    print("Strands for query processing...:", min_srds,
+          "  min | ", max_srds, "  max |", avg_srds,
           "avg")
-    print("Total I/O per query execution!", io_srd, " nucleotides| ",
-          io_srd * 2, "bits|", int(io_srd / 4), "Bytes|", "total(%)",
-          float((io_srd/gr_size)*100))
-    print("Per strand primer data size..!", 96, "   nucleotides| ",
+    print("Per strand primer data size..!", 96, " nucleotides| ",
           96 * 2, " bits|", int(byt_per_srd/4), "Bytes")
-    print("Per strand payload data size.!",  byt_per_srd * 4, "  nucleotides| ",
+    print("Per strand payload data size.!",  byt_per_srd * 4, " nucleotides| ",
           byt_per_srd * 8, "bits|", byt_per_srd, "Bytes")
     print("Total primers overhead(%)....!", pc_ovh)
     print("Total payload data(%)........!", 100-pc_ovh)
     print("Primer addresses overhead....!", pm_ovh, " nucleotides|",
-          pm_ovh * 2, " bits|", int(pm_ovh / 4), "Bytes|",
+          int(pm_ovh / 4), "Bytes|",
           int(pm_ovh / (4 * 1024)), "KB")
-    print("Total graph data size........!", gr_size, "nucleotides|",
-          gr_size * 2, "bits|", int(gr_size / 4), "Bytes|",
-          int(gr_size / (4 * 1024)), "KB")
-    print("............. OUTPUT Graph 1 ..................")
+    #print("Total graph data size........!", gr_size, "nucleotides|",
+    #      gr_size * 2, "bits|", int(gr_size / 4), "Bytes|",
+    #      int(gr_size / (4 * 1024)), "KB")
+    print("................................ OUTPUT Graph .................................")
