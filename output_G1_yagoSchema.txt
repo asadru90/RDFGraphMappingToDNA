@@ -10,6 +10,45 @@ and at line number 1025 set file name in the python code file.
 fileName = "yagoSchema" 
 /************************************************************/
 
+Mapping Queries to DNA Strands...
+
+............. Query Processing.............!
+======================getrange_s:asad bitmap 1050 1057
+Total Number of Strands Accessed: 14
+(Object): ['”Writer, poet”@en#']
+SPO: Allen_Ginsberg occupation ”Writer, poet”@en#
+............. Query Processing.............!
+======================getrange_o:asad bitmap 1015 1015
+Total Number of Strands Accessed: 13
+(Predicate): ['schoolTradition#']
+SPO: Albert_Camus schoolTradition# Absurdism
+............. Query Processing.............!
+======================getrange_s:asad bitmap 1064 1069
+Total Number of Strands Accessed: 12
+(Object): ['”Student49@Department3.University0.edu”#']
+SPO: Student49 emailAddress ”Student49@Department3.University0.edu”#
+............. Query Processing.............!
+======================getrange_s:asad bitmap 1064 1069
+Total Number of Strands Accessed: 14
+(Predicate, Object): [('emailAddress#', '”Student49@Department3.University0.edu”#'), ('memberOf#', 'http://www.Department3.University0.edu#'), ('name#', '”UndergraduateStudent49”#'), ('takesCourse#', 'Course32#'), ('telephone#', '”xxx-xxx-xxxx”#'), ('type#', 'UndergraduateStudent#')]
+SPO: Student49 emailAddress# ”Student49@Department3.University0.edu”#
+SPO: Student49 memberOf# http://www.Department3.University0.edu#
+SPO: Student49 name# ”UndergraduateStudent49”#
+SPO: Student49 takesCourse# Course32#
+SPO: Student49 telephone# ”xxx-xxx-xxxx”#
+SPO: Student49 type# UndergraduateStudent#
+............. Query Processing.............!
+======================getrange_p:asad bitmap 1077 1078
+Total Number of Strands Accessed: 15
+(Subject, Object): [('Student10#', '”xxx-xxx-xxxx”#'), ('Student49#', '”xxx-xxx-xxxx”#')]
+SPO: Student10# telephone ”xxx-xxx-xxxx”#
+SPO: Student49# telephone ”xxx-xxx-xxxx”#
+............. Query Processing.............!
+======================getrange_o:asad bitmap 1033 1033
+Total Number of Strands Accessed: 13
+(Subject, Predicate): [('Allen_Ginsberg#', 'influenced#')]
+SPO: Allen_Ginsberg# influenced# John_Lennon
+
 .................................. OUTPUT Graph ................................
 Integer Size for the graph ......................................: Int size  = 2
 Total number of SPO..............................................: SPO#      = 1082
