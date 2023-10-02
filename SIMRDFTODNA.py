@@ -1021,7 +1021,7 @@ if __name__ == '__main__':
     dt_tpl2 = create_rdf_triple_table2()
     dt_tpl.extend(dt_tpl2)
 
-    filePath = "C:\\Users\\admin\\Desktop\\testRDF\\testDataset11-Yago\\dataset0_ok\\"
+    filePath = "C:\\Users\\admin\\Desktop\\testRDF\\yourFilePath\\"
     fileName = "yagoSchema"
     #fileWrite(filePath, fileName, ".ttl")
 
