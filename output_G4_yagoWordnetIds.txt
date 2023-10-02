@@ -1,3 +1,15 @@
+/*************************************************************/
+set these parameter values to get the following results
+at the line numbers 1014 and 1015 in the Python code file.
+
+int_size 	= 4
+byt_per_srd 	= 256
+
+and at line number 1025 set the file name in the Python code file.
+filePath = "C:\\Users\\admin\\Desktop\\testGraphRDFDataset\\"
+fileName = "yagoWordnetIds"
+/************************************************************/
+
 Mapping Queries to DNA Strands...
 
 ............. Query Processing.............!
@@ -36,20 +48,21 @@ SPO: Student49# telephone ”xxx-xxx-xxxx”#
 Total Number of Strands Accessed: 40
 (Subject, Predicate): [('Allen_Ginsberg#', 'influenced#')]
 SPO: Allen_Ginsberg# influenced# John_Lennon
-............. OUTPUT Graph 1 ..................
 
-Total number of SPO: 68967
-Total number of mapping strands......! 31183
-Total number of extra index+bitmap strands......! 4660 = 14.944040021806753 %
-Total number of queries executed......! 6
-Total number of accessed strands in all queries ......! 242
-Strands accessed after removing duplicate strands for all queries......! 76
-Strands for query processing.! 39     min        |  42   max | 40 avg
-Total I/O per query execution! 40960  nucleotides|  81920 bits| 10240 Bytes| total(%) 0.12827502164640991
-Per strand primer data size..! 96    nucleotides|  192  bits| 64 Bytes
-Per strand payload data size.! 1024   nucleotides|  2048 bits| 256 Bytes
+.................................. OUTPUT Graph ................................
+Integer Size for the graph ......................................: Int size  = 4
+Total number of SPO..............................................: SPO#      = 68967
+Total number of mapping strands..................................: Strands#  = 31183
+Total indexing overhead .........................................: Overhead  = 14.944040021806753 %
+Total I/O per query execution..: 40960  nucleotides|  81920 Bytes| Output(%) = 0.12827502164640991
+Total number of extra index+bitmap strands.......................: 4660
+Total number of queries executed.................................: 6
+Total number of accessed strands in all queries .................: 242
+Strands accessed after removing duplicate strands for all queries: 76
+Strands for query processing...: 39   min |  42   max | 40 avg
+Per strand primer data size..! 96  nucleotides|  192  bits| 64 Bytes
+Per strand payload data size.! 1024  nucleotides|  2048 bits| 256 Bytes
 Total primers overhead(%)....! 11
 Total payload data(%)........! 89
-Primer addresses overhead....! 3991424  nucleotides| 7982848  bits| 997856 Bytes| 974 KB
-Total graph data size........! 31931392 nucleotides| 63862784 bits| 7982848 Bytes| 7795 KB
-............. OUTPUT Graph 1 ..................
+Primer addresses overhead....! 3991424  nucleotides| 997856 Bytes| 974 KB
+................................ OUTPUT Graph .................................
