@@ -6,7 +6,7 @@ int_size 	= 4
 byt_per_srd 	= 256
 
 and at line number 1025 set the file name in the Python code file.
-filePath = "C:\\Users\\admin\\Desktop\\testGraphRDFDataset\\"
+filePath = "C:\\Users\\admin\\Desktop\\yourFilePath\\"
 fileName = "yagoWordnetIds"
 /************************************************************/
 
