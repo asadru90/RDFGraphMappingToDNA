@@ -1,0 +1,29 @@
+/*************************************************************/
+set these parameter values to get the following results
+at the line numbers 1014 and 1015 in the python code file.
+
+int_size 	= 2
+byt_per_srd 	= 256
+
+and at line number 1025 set file name in the python code file.
+
+fileName = "yagoSchema" 
+/************************************************************/
+
+.................................. OUTPUT Graph ................................
+Integer Size for the graph ......................................: Int size  = 2
+Total number of SPO..............................................: SPO#      = 1082
+Total number of mapping strands..................................: Strands#  = 125
+Total indexing overhead .........................................: Overhead  = 30.4 %
+Total I/O per query execution..: 13312  nucleotides|  26624 Bytes| Output(%) = 10.4
+Total number of extra index+bitmap strands.......................: 38
+Total number of queries executed.................................: 6
+Total number of accessed strands in all queries .................: 81
+Strands accessed after removing duplicate strands for all queries: 24
+Strands for query processing...: 12   min |  15   max | 13 avg
+Per strand primer data size..! 96  nucleotides|  192  bits| 64 Bytes
+Per strand payload data size.! 1024  nucleotides|  2048 bits| 256 Bytes
+Total primers overhead(%)....! 11
+Total payload data(%)........! 89
+Primer addresses overhead....! 16000  nucleotides| 4000 Bytes| 3 KB
+................................ OUTPUT Graph .................................
