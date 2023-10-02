@@ -1,12 +1,12 @@
 /*************************************************************/
 set these parameter values to get the following results
-at the line numbers 1014 and 1015 in the python code file.
+at the line numbers 1014 and 1015 in the Python code file.
 
 int_size 	= 2
 byt_per_srd 	= 256
 
-and at line number 1025 set file name in the python code file.
-
+and at line number 1025 set the file name in the Python code file.
+filePath = "C:\\Users\\admin\\Desktop\\yourFilePath\\"
 fileName = "yagoSchema" 
 /************************************************************/
 
