@@ -1,8 +1,12 @@
+
 import csv
 import re
 import math
 import pprint
+import pandas as pd
+import numpy as np
 from typing import Dict, Any
+from rdflib import Graph
 
 from tabulate import tabulate
 from operator import itemgetter
@@ -57,10 +61,12 @@ def map_id_to_rdf_string(str_id, sd_cnt, dic_mid_addr, dic_srds, tmp_srds):
     is_found = False
     ed_idx = sd_cnt
     sd_addr = dic_mid_addr["bitmap_dic"]
+    global seq_trns
     while is_found is False and sd_addr != 0:
         if tmp_srds.get(sd_addr) is None:
             sd_data = dic_srds[sd_addr]
             tmp_srds[sd_addr] = sd_data
+            seq_trns += 1
         else:
             sd_data = tmp_srds[sd_addr]
         pl_data, prv_zero, prv_one, ns_addr, ps_addr = \
@@ -110,10 +116,12 @@ def map_rdf_string_to_id(str_item, sd_cnt, dic_mid_addr, dic_srds, tmp_srds):
     is_found = False
     ed_idx = sd_cnt
     sd_addr = int(dic_mid_addr["dictionary"])
+    global seq_trns
     while is_found is False and sd_addr != 0:
         if tmp_srds.get(sd_addr) is None:
             sd_data = dic_srds[sd_addr]
             tmp_srds[sd_addr] = sd_data
+            seq_trns += 1
         else:
             sd_data = tmp_srds[sd_addr]
         pl_data, ns_addr, ps_addr = \
@@ -157,10 +165,12 @@ def get_range_using_bitmap_p(prd_id, dic_mid_addr, dic_srds, tmp_srds):
     ed_idx = 0
     is_found = False
     sd_addr = dic_mid_addr["bitmap_pos"]
+    global seq_trns
     while is_found is False and sd_addr != 0:
         if tmp_srds.get(sd_addr) is None:
             sd_data = dic_srds[sd_addr]
             tmp_srds[sd_addr] = sd_data
+            seq_trns += 1
         else:
             sd_data = tmp_srds[sd_addr]
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
@@ -198,7 +208,7 @@ def get_range_using_bitmap_p(prd_id, dic_mid_addr, dic_srds, tmp_srds):
         else:
             sd_addr = ps_addr
 
-    print("======================getrange_p:asad bitmap", st_idx, ed_idx)
+    ##print("======================getrange_p:asad bitmap", st_idx, ed_idx)
     return st_idx, ed_idx
 
 
@@ -208,10 +218,12 @@ def get_range_using_bitmap_s(sub_id, dic_mid_addr, dic_srds, tmp_srds):
     ed_idx = 0
     is_found = False
     sd_addr = dic_mid_addr["bitmap_spo"]
+    global seq_trns
     while is_found is False and sd_addr != 0:
         if tmp_srds.get(sd_addr) is None:
             sd_data = dic_srds[sd_addr]
             tmp_srds[sd_addr] = sd_data
+            seq_trns += 1
         else:
             sd_data = tmp_srds[sd_addr]
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
@@ -249,7 +261,7 @@ def get_range_using_bitmap_s(sub_id, dic_mid_addr, dic_srds, tmp_srds):
         else:
             sd_addr = ps_addr
 
-    print("======================getrange_s:asad bitmap", st_idx, ed_idx)
+    ##print("======================getrange_s:asad bitmap", st_idx, ed_idx)
     return st_idx, ed_idx
 
 
@@ -259,10 +271,12 @@ def get_range_using_bitmap_o(obj_id, dic_mid_addr, dic_srds, tmp_srds):
     ed_idx = 0
     is_found = False
     sd_addr = dic_mid_addr["bitmap_osp"]
+    global seq_trns
     while is_found is False and sd_addr != 0:
         if tmp_srds.get(sd_addr) is None:
             sd_data = dic_srds[sd_addr]
             tmp_srds[sd_addr] = sd_data
+            seq_trns += 1
         else:
             sd_data = tmp_srds[sd_addr]
         pl_data, ct_zero, ct_one, ns_addr, ps_addr = \
@@ -300,7 +314,7 @@ def get_range_using_bitmap_o(obj_id, dic_mid_addr, dic_srds, tmp_srds):
         else:
             sd_addr = ps_addr
 
-    print("======================getrange_o:asad bitmap", st_idx, ed_idx)
+    ##print("======================getrange_o:asad bitmap", st_idx, ed_idx)
     return st_idx, ed_idx
 
 
@@ -331,6 +345,7 @@ def get_ids_using_lookup_pos(st_idx, ed_idx, obj_id, dic_mid_addr,
     std_len = num_per_strand
     ls_sub_ids = []
     sd_addr = dic_mid_addr["index_pos"]
+    global seq_trns
     while st_idx > 0:
         is_found = False
         st_idx, ed_idx, st_idx_n, ed_idx_n = \
@@ -339,6 +354,7 @@ def get_ids_using_lookup_pos(st_idx, ed_idx, obj_id, dic_mid_addr,
             if tmp_srds.get(sd_addr) is None:
                 sd_data = dic_srds[sd_addr]
                 tmp_srds[sd_addr] = sd_data
+                seq_trns += 1
             else:
                 sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
@@ -374,6 +390,7 @@ def get_ids_using_lookup_spo(st_idx, ed_idx, prd_id, dic_mid_addr,
     std_len = num_per_strand
     ls_obj_ids = []
     sd_addr = dic_mid_addr["index_spo"]
+    global seq_trns
     while st_idx > 0:
         is_found = False
         st_idx, ed_idx, st_idx_n, ed_idx_n = \
@@ -382,6 +399,7 @@ def get_ids_using_lookup_spo(st_idx, ed_idx, prd_id, dic_mid_addr,
             if tmp_srds.get(sd_addr) is None:
                 sd_data = dic_srds[sd_addr]
                 tmp_srds[sd_addr] = sd_data
+                seq_trns += 1
             else:
                 sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
@@ -417,6 +435,7 @@ def get_ids_using_lookup_osp(st_idx, ed_idx, sub_id, dic_mid_addr,
     std_len = num_per_strand
     ls_prd_ids = []
     sd_addr = dic_mid_addr["index_osp"]
+    global seq_trns
     while st_idx > 0:
         is_found = False
         st_idx, ed_idx, st_idx_n, ed_idx_n = \
@@ -425,6 +444,7 @@ def get_ids_using_lookup_osp(st_idx, ed_idx, sub_id, dic_mid_addr,
             if tmp_srds.get(sd_addr) is None:
                 sd_data = dic_srds[sd_addr]
                 tmp_srds[sd_addr] = sd_data
+                seq_trns += 1
             else:
                 sd_data = tmp_srds[sd_addr]
             pl_data, prv_start, prv_end, ns_addr, ps_addr = \
@@ -489,6 +509,45 @@ def generate_index_bitmaps(tab_spo, tab_pos, tab_osp, n_dict_elm):
     bitmap_spo = [row[0] for row in tab_spo]
     bitmap_pos = [row[0] for row in tab_pos]
     bitmap_osp = [row[0] for row in tab_osp]
+
+    print("############################# Dataset Statistics ##################################")
+
+    x = np.array(bitmap_spo)
+    r = np.array(bitmap_pos)
+    z = np.array(bitmap_osp)
+    maximum = 0
+
+    print("Total Tuples Count:", len(x))
+    y1 = np.bincount(x)
+    max1 = max(y1)
+    #for i in range(len(y1)):
+    #    if y1[i] == max1:
+    #        print("SPO MFV ID:", i, end=", ")
+    maximum = maximum + max1
+    print("MFV SPO count", max1, ", UV count:", len(np.unique(x)),
+          ", MFV occurs:", math.ceil((max1 * 100 / len(x))), "%"
+          ", Unique SPO:",math.ceil((len(np.unique(x))*100/len(x))),"%")
+
+    y2 = np.bincount(r)
+    max1 = max(y2)
+    #for i in range(len(y2)):
+    #    if y2[i] == max1:
+    #        print("POS MFV ID:", i, end=", ")
+    maximum = maximum + max1
+    print("MFV POS count", max1, ", UV count:", len(np.unique(r)),
+          ", MFV occurs:", math.ceil((max1 * 100 / len(r))), "%"
+          ", Unique POS:",math.ceil((len(np.unique(r))*100/len(r))), "%")
+
+    y3 = np.bincount(z)
+    max1 = max(y3)
+    #for i in range(len(y3)):
+    #   if y3[i] == max1:
+    #        print("OSP MFV ID:", i, end=", ")
+    maximum = maximum + max1
+    print("MFV OSP count", max1, ", UV count:", len(np.unique(z)),
+          ", MFV occurs:", math.ceil((max1 * 100 / len(z))), "%"
+          ", Unique OSP:",math.ceil((len(np.unique(z))*100/len(z))), "%")
+    print("############################# Dataset Statistics ##################################")
 
     tab_spo = list(map(itemgetter(1, 2), tab_spo))
     tab_pos = list(map(itemgetter(1, 2), tab_pos))
@@ -601,6 +660,7 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
 
     # Mapping all bitmaps (dictionary, spo, pos and osp index tables)
     # into as many dna strands as needed
+    #print("\nDictionary Strands...:", len(lst_srds))
     lst_srds.clear()
     b_size = ((DNA_STRAND_SIZE - (2 * INT_SIZE)) * 8)
     b_list = [dic_bm[j:j + b_size] for j in range(0, len(dic_bm), b_size)]
@@ -610,8 +670,9 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "bitmap")
     dic_adrs["bitmap_dic"] = mid
-    print("bitmap_dic:strands count", high_val-1)
+    ##print("bitmap_dic:strands count", high_val-1)
 
+    #print("Bitmap_dic Strands...:", len(lst_srds))
     lst_srds.clear()
     b_list = [b_spo[k:k + b_size] for k in range(0, len(b_spo), b_size)]
     for b in b_list:
@@ -620,8 +681,9 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "bitmap")
     dic_adrs["bitmap_spo"] = mid
-    print("bitmap_spo:strands count", high_val-1)
+    ##print("bitmap_spo:strands count", high_val-1)
 
+    #print("Bitmap_spo Strands...:", len(lst_srds))
     lst_srds.clear()
     b_list = [b_pos[l:l + b_size] for l in range(0, len(b_pos), b_size)]
     for c in b_list:
@@ -630,8 +692,9 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "bitmap")
     dic_adrs["bitmap_pos"] = mid
-    print("bitmap_pos:strands count", high_val-1)
+    ##print("bitmap_pos:strands count", high_val-1)
 
+    #print("Bitmap_pos Strands...:", len(lst_srds))
     lst_srds.clear()
     b_list = [b_osp[m:m + b_size] for m in range(0, len(b_osp), b_size)]
     for d in b_list:
@@ -640,11 +703,12 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "bitmap")
     dic_adrs["bitmap_osp"] = mid
-    print("bitmap_osp:strands count", high_val-1)
+    ##print("bitmap_osp:strands count", high_val-1)
     idx_str_cnt = high_val - 1
 
     # Mapping all index table (spo, pos and osp)
     # into as many dna strands as needed
+    #print("Bitmap_osp Strands...:", len(lst_srds))
     lst_srds.clear()
     b_size = int((DNA_STRAND_SIZE / (2 * INT_SIZE)) - 1)
     b_list = [t_spo[n:n + b_size] for n in range(0, len(t_spo), b_size)]
@@ -654,8 +718,9 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "index")
     dic_adrs["index_spo"] = mid
-    idx_str_cnt = 2 * (idx_str_cnt + high_val - 1)
+    idx_str_cnt = 3 * (idx_str_cnt + high_val - 1)
 
+    #print("Index_spo Strands...:", len(lst_srds))
     lst_srds.clear()
     b_list = [t_pos[o:o + b_size] for o in range(0, len(t_pos), b_size)]
     for f in b_list:
@@ -664,8 +729,9 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "index")
     dic_adrs["index_pos"] = mid
-    print("index_pos:strands count", high_val - 1)
+    ##print("index_pos:strands count", high_val - 1)
 
+    #print("Index_pos Strands...:", len(lst_srds))
     lst_srds.clear()
     b_list = [t_osp[p:p + b_size] for p in range(0, len(t_osp), b_size)]
     for g in b_list:
@@ -674,8 +740,10 @@ def map_to_dna_strands(t_dic, t_spo, t_pos, t_osp,
     mid, srd_cnt = compose_dna_strand(
         dic_srds, srd_cnt, high_val, lst_srds, "index")
     dic_adrs["index_osp"] = mid
-    print("index_osp:strands count", high_val - 1)
+    ##print("index_osp:strands count", high_val - 1)
 
+    #print("Index_osp Strands...:", len(lst_srds))
+    #print ("dicionary strands count", dic_srds_cnt)
     return dic_srds_cnt, dic_srds, dic_adrs, idx_str_cnt
 
 
@@ -871,48 +939,7 @@ def print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds):
 
 def create_rdf_triple_table():
     # create data
-    data = [["Allen_Ginsberg", "wikiPageUsesTemplate", "Template:Infobox writer"],
-            ["Allen_Ginsberg", "influenced", "John_Lennon"],
-            ["Allen_Ginsberg", "occupation", "”Writer, poet”@en"],
-            ["Allen_Ginsberg", "influences", "Fyodor_Dostoyevsky"],
-            ["Allen_Ginsberg", "deathPlace", "”New York City, United States”@en"],
-            ["Allen_Ginsberg", "deathDate", "”1997-04-05”"],
-            ["Allen_Ginsberg", "birthPlace", "”Newark, New Jersey, United States”@en"],
-            ["Allen_Ginsberg", "birthDate", "”1926-06-03”"],
-            ["Albert_Camus", "wikiPageUsesTemplate", "Template:Infobox philosopher"],
-            ["Albert_Camus", "influenced", "Orhan_Pamuk"],
-            ["Albert_Camus", "influences", "Friedrich_Nietzsche"],
-            ["Albert_Camus", "schoolTradition", "Absurdism"],
-            ["Albert_Camus", "deathPlace", "”Villeblevin, Yonne, Burgundy, France”@en"],
-            ["Albert_Camus", "deathDate", "”1960-01-04”"],
-            ["Albert_Camus", "birthPlace", "”Drean, El Taref, Algeria”@en"],
-            ["Albert_Camus", "birthDate", "”1913-11-07"],
-            ["Student49", "telephone", "”xxx-xxx-xxxx”"],
-            ["Student49", "memberOf", "http://www.Department3.University0.edu"],
-            ["Student49", "takesCourse", "Course32"],
-            ["Student49", "name", "”UndergraduateStudent49”"],
-            ["Student49", "emailAddress", "”Student49@Department3.University0.edu”"],
-            ["Student49", "type", "UndergraduateStudent"],
-            ["Student10", "telephone", "”xxx-xxx-xxxx”"],
-            ["Student10", "memberOf", "http://www.Department3.University0.edu"],
-            ["Student10", "takesCourse", "Course20"],
-            ["Student10", "name", "”UndergraduateStudent10”"],
-            ["Student10", "emailAddress", "”Student10@Department3.University0.edu”"],
-            ["Student10", "type", "UndergraduateStudent"],
-            ["SurgeryProcedure:236", "hasCardiacValveAnatomyPathologyData", "CardiacValveAnatomyPathologyData:70"],
-            ["SurgeryProcedure:236", "hasCardiacValveRepairProcedureData", "CardiacValveRepairProcedureData:16"],
-            ["SurgeryProcedure:236", "SurgeryProcedureClass", "”cardiac valve”"],
-            ["SurgeryProcedure:236", "CardiacValveEtiology", "”other”"],
-            ["SurgeryProcedure:236", "CardiacValveEtiology", "Event:184"],
-            ["SurgeryProcedure:236", "belongsToEvent", "Event:184"],
-            ["SurgeryProcedure:236", "SurgeryProcedureDescription", "”pulmonary valve repair”"],
-            ["SurgeryProcedure:236", "CardiacValveStatusologyData", "native"],
-            ["SurgeryProcedure:104", "hasCardiacValveAnatomyPathologyData", "CardiacValveAnatomyPathologyData:35"],
-            ["SurgeryProcedure:104", "SurgeryProcedureClass", "”cardiac valve”"],
-            ["SurgeryProcedure:104", "CardiacValveEtiology", "”rheumatic”"],
-            ["SurgeryProcedure:104", "belongsToEvent", "Event:81"],
-            ["SurgeryProcedure:104", "SurgeryProcedureDescription", "”mitral va”"],
-
+    data = [["Usmani", "executing", "python-code"],
             ]
     # define header names
     col_names = ["Subject", "Property", "Object"]
@@ -1004,7 +1031,6 @@ def fileWrite(filePath, fileName, fileExt):
     print("parsing done!")
     v = g.serialize(format="ntriples")
     print("serialization done!")
-    print(v)
     with open(filePath + fileName + ".txt", "a", encoding="utf-8") as f:
         f.write(v)
 
@@ -1012,22 +1038,53 @@ def fileWrite(filePath, fileName, fileExt):
 if __name__ == '__main__':
 
     int_size = 4
+    prm_cnt = 4
+    prm_siz = 32
+    prm_len = prm_siz * prm_cnt
     byt_per_srd = 256
-    elm_per_srd = byt_per_srd/4 - 1
-    pr_len = 4 * 32
-
+    elm_per_srd = byt_per_srd/int_size - 1
+    global seq_trns
+    seq_trns = 0
     print("\nCreating tuples from RDF triple table....\n")
     dt_tpl = create_rdf_triple_table()
-    dt_tpl2 = create_rdf_triple_table2()
-    dt_tpl.extend(dt_tpl2)
+    ##dt_tpl2 = create_rdf_triple_table2()
+    ##dt_tpl.extend(dt_tpl2)
 
-    filePath = "C:\\Users\\admin\\Desktop\\testRDF\\yourFilePath\\"
-    fileName = "yagoWordnetIds"
+    print("\nLoading graph data......................\n")
+
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testNewDataset\\"
+    #fileName = "BKR-star-fulldump"
+
+    filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset1\\"
+    fileName = "rismAuthoritiesRDF_D9.txt"
+
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset22-British\\dataset8_ok\\"
+    #fileName = "BNBLODC_sample.txt"
+
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset22-British\\dataset7_ok\\"
+    #fileName = "BLICBasicBooks_sample.txt"
+
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset22-British\\dataset6_ok\\"
+    #fileName = "BNBLODS_sample.txt"
+
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset22-British\\dataset5_ok\\"
+    #fileName = "knowledge-organizations_202307.txt"
+
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset11-Yago\\dataset5_ok\\"
+    #fileName = "yagoWordnetDomains.txt"
+
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset11-Yago\\dataset4_ok\\"
+    #fileName = "yagoWordnetIds.txt"
+
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset11-Yago\\dataset2_ok\\"
+    #fileName = "yagoGeonamesGlosses.txt"
+
     #fileWrite(filePath, fileName, ".ttl")
-
-    with open(filePath + fileName + '.txt', 'r', encoding="utf-8") as read_obj:
+    #exit()
+    with open(filePath + fileName, 'r', encoding="utf-8") as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=' ')
         tmp_row = []
+        maxLen = 0
         for row in csv_reader:
             row = ",".join(row).split("\t")
             row = " ".join(row).split(",")
@@ -1035,8 +1092,14 @@ if __name__ == '__main__':
                 if len(row[0]) <= byt_per_srd \
                         and len(row[1]) <= byt_per_srd \
                         and len(row[2]) <= byt_per_srd:
+                    #print(row[0], row[1], row[2])
                     dt_tpl.append([row[0], row[1], row[2]])
-                print(row[0], row[1], row[2])
+                    if maxLen < len(row[0]):
+                        maxLen = len(row[0])
+                    if maxLen < len(row[1]):
+                        maxLen = len(row[1])
+                    if maxLen < len(row[2]):
+                        maxLen = len(row[2])
 
     t_dic, t_rdf = \
         convert_id_based_triple_storage(dt_tpl)
@@ -1050,83 +1113,22 @@ if __name__ == '__main__':
     cnt_dic_srds, dic_srds, dic_mid_addr, idx_str_cnt = \
         map_to_dna_strands(t_dic, t_spo, t_pos, t_osp, b_spo,
                            b_pos, b_osp, int_size, byt_per_srd)
+    ##for i, x in enumerate(dic_srds):
+        ##print("Strand", i + 1, dic_srds[x])
 
-    print("\n Total number of SPO:", len(dt_tpl))
-    print("\nMapping to DNA Strands...:", len(dic_srds))
-    for i, x in enumerate(dic_srds):
-        print("Strand", i + 1, dic_srds[x])
-
-    print("\nMapping Queries to DNA Strands...\n")
-    min_srds = 8024
+    print("\n########################### Processing Queries Start ##############################\n")
+    min_srds = 32732
     max_srds = 0
     sum_srds = 0
+    qry_cnt = 0
+    max_run = 0
+    seq_runs = 0
 
     tmp_dic_srds: dict[Any, Any] = {}
     dup_dic_srds: dict[Any, Any] = {}
 
-    qr_type = "SP?"
-    sub_str = "Allen_Ginsberg"
-    prd_str = "occupation"
-    obj_str = None
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    dup_dic_srds.update(tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    sum_srds = sum_srds + tmp_cnt
-    tmp_cnt = 0
-
-    qr_type = "S?O"
-    sub_str = "Albert_Camus"
-    prd_str = None
-    obj_str = "Absurdism"
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-
-    dup_dic_srds.update(tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    sum_srds = sum_srds + tmp_cnt
-    tmp_cnt = 0
-
-    qr_type = "SP?"
-    sub_str = "Student49"
-    prd_str = "emailAddress"
-    obj_str = None
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    dup_dic_srds.update(tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    sum_srds = sum_srds + tmp_cnt
-    tmp_cnt = 0
-
     qr_type = "S??"
-    sub_str = "Student49"
+    sub_str = "<http://data.rism.info/id/rismauthorities/pe30000243>"
     prd_str = None
     obj_str = None
     tmp_dic_srds.clear()
@@ -1143,32 +1145,19 @@ if __name__ == '__main__':
     if tmp_cnt < min_srds:
         min_srds = tmp_cnt
     sum_srds = sum_srds + tmp_cnt
+    qry_cnt = qry_cnt + 1
+    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
+    if max_run < seq_trns:
+        max_run = seq_trns
+    seq_runs = seq_runs + seq_trns
     tmp_cnt = 0
+    seq_trns = 0
 
-    qr_type = "?P?"
-    sub_str = None
-    prd_str = "telephone"
-    obj_str = None
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    dup_dic_srds.update(tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    sum_srds = sum_srds + tmp_cnt
-    tmp_cnt = 0
 
     qr_type = "??O"
     sub_str = None
     prd_str = None
-    obj_str = "John_Lennon"
+    obj_str = "Poet"
     tmp_dic_srds.clear()
     map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                 cnt_dic_srds,
@@ -1183,39 +1172,88 @@ if __name__ == '__main__':
     if tmp_cnt < min_srds:
         min_srds = tmp_cnt
     sum_srds = sum_srds + tmp_cnt
+    qry_cnt = qry_cnt + 1
+    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
+    if max_run < seq_trns:
+        max_run = seq_trns
+    seq_runs = seq_runs + seq_trns
     tmp_cnt = 0
+    seq_trns = 0
 
-    print("\n.................................. OUTPUT Graph ................................")
-    avg_srds = int(sum_srds / 6)
-    io_srd = avg_srds * byt_per_srd * 4
+    qr_type = "?P?"
+    sub_str = None
+    prd_str = "<http://www.w3.org/2004/02/skos/core#prefLabel>"
+    obj_str = None
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                t_dic,
+                                tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
+    qry_cnt = qry_cnt + 1
+    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
+    if max_run < seq_trns:
+        max_run = seq_trns
+    seq_runs = seq_runs + seq_trns
+    tmp_cnt = 0
+    seq_trns = 0
+
+    print("\n############################ Processing Queries End ###############################\n")
+    print("\n################################# OUTPUT Graph ####################################")
+    avg_srds = int(sum_srds / qry_cnt)
     t_srds = len(dic_srds)
     gr_size = t_srds * byt_per_srd * 4
-    pm_ovh = t_srds * pr_len
+    pm_ovh = t_srds * prm_len
     pc_ovh = int((pm_ovh / (gr_size + pm_ovh)) * 100)
-    print("Integer Size for the graph ......................................: Int size  =", int_size)
-    print("Total number of SPO..............................................: SPO#      =", len(dt_tpl))
-    print("Total number of mapping strands..................................: Strands#  =", t_srds)
-    print("Total indexing overhead .........................................: Overhead  =", (idx_str_cnt/t_srds)*100,"%")
-    print("Total I/O per query execution..:", io_srd, " nucleotides| ",
-          io_srd * 2, "Bytes|", "Output(%) =",
-          float((io_srd / gr_size) * 100))
-    print("Total number of extra index+bitmap strands.......................:", idx_str_cnt)
-    print("Total number of queries executed.................................:", 6)
-    print("Total number of accessed strands in all queries .................:", sum_srds)
-    print("Strands accessed after removing duplicate strands for all queries:", len(dup_dic_srds))
-    print("Strands for query processing...:", min_srds,
-          "  min | ", max_srds, "  max |", avg_srds,
-          "avg")
-    print("Per strand primer data size..!", 96, " nucleotides| ",
-          96 * 2, " bits|", int(byt_per_srd/4), "Bytes")
-    print("Per strand payload data size.!",  byt_per_srd * 4, " nucleotides| ",
-          byt_per_srd * 8, "bits|", byt_per_srd, "Bytes")
-    print("Total primers overhead(%)....!", pc_ovh)
-    print("Total payload data(%)........!", 100-pc_ovh)
-    print("Primer addresses overhead....!", pm_ovh, " nucleotides|",
-          int(pm_ovh / 4), "Bytes|",
-          int(pm_ovh / (4 * 1024)), "KB")
-    #print("Total graph data size........!", gr_size, "nucleotides|",
-    #      gr_size * 2, "bits|", int(gr_size / 4), "Bytes|",
-    #      int(gr_size / (4 * 1024)), "KB")
-    print("................................ OUTPUT Graph .................................")
+    ecc_ovd= 3*((byt_per_srd+(prm_siz/2))/16)
+    dic_ovh = ((cnt_dic_srds / t_srds)*100)
+    idx_ovh = ((idx_str_cnt/t_srds)*100)
+    all_ovh = prm_siz + byt_per_srd + ecc_ovd
+    pyl_ovh = byt_per_srd / all_ovh
+
+
+    print("The graph data file name .................................: GraphName =", fileName)
+    print("Integer Size for the graph ...............................: IntegrSize=", int_size)
+    print("Per strand payload data size..............................: PaylodSize=", byt_per_srd, "B")
+    print("Max RDF String Length.....................................: MaxItemLen=", byt_per_srd)
+    print("Total Dictionary items: ..................................: DicItemCnt=", len(t_dic))
+    print("Total number of SPO.......................................: SPOsCount =", len(dt_tpl))
+    print("Total number of mapping strands...........................: TotStrands=", t_srds)
+    print("Total number of dictionary strands........................: DicStrand =", cnt_dic_srds)
+    print("Total number of extra index+bitmap strands................: IdxStrand =", idx_str_cnt)
+    print("Total dictionary items overhead ..........................: DicOvrhead=", "%.2f" % dic_ovh, "%")
+    print("Total indexing overhead ..................................: IdxOvrhead=", "%.2f" % idx_ovh, "%")
+    print("Maximum sequencing runs per query:........................: MaxSeqruns=", max_run)
+    print("Maximum sequencing strands accessed per query:............: MaxSeqruns=", max_srds)
+    print("Minimum sequencing strands accessed per query:............: MinSeqruns=", min_srds)
+    print("Average sequencing strands accessed per query:............: AvgSeqruns=", avg_srds)
+    print("Total number of accessed strands in all queries ..........: AccesedStr=", sum_srds)
+    print("Strands accessed after removing duplicate for all queries.: UniqueStrs=", len(dup_dic_srds))
+    print("Total number of queries executed..........................: QueryCount=", qry_cnt)
+    print("Average sequencing runs per query:........................: AvgSeqRuns=", math.ceil(seq_runs/qry_cnt))
+    print("Maximum I/O per query execution...........................: OutputData=",
+          "%.2f" % float((max_srds / t_srds) * 100), "%")
+    print("Total graph payload data size.............................: GraphSize =",
+          "%.2f" % ((byt_per_srd * t_srds)/(1024*1024)), "GB")
+    print("Total primer data size per graph .........................: PaylodSize=",
+          "%.2f" % ((prm_len/4 * t_srds)/(1024*1024)), "GB")
+    print("Per strand primer data size...............................: PrimerSize=", prm_siz, "B")
+    print("Per strand error-correcting codes data size...............: ECCDataSiz=", ecc_ovd, "B")
+    print("Primer overhead in the graph .............................: PrimerOvhd=",
+          "%.2f" %(( prm_siz/all_ovh)* 100), "%")
+    print("Error-correcting codes overhead in the graph..............: ECCOverhed=",
+          "%.2f" % ((ecc_ovd / all_ovh)* 100), "%")
+    print("Indexing overhead in the graph ...........................: IndexgOvhd=",
+          "%.2f" % (( idx_ovh * pyl_ovh)), "%")
+    print("Dictionary overhead in the graph .........................: DicOverhed=",
+          "%.2f" % ((dic_ovh * pyl_ovh)), "%")
+
+    print("\n################################# OUTPUT Graph ####################################")
