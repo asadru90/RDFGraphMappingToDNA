@@ -1,5 +1,4 @@
 
-import csv
 import re
 import math
 import pprint
@@ -544,8 +543,8 @@ def generate_index_bitmaps(tab_spo, tab_pos, tab_osp, n_dict_elm):
     #        print("SPO MFV ID:", i, end=", ")
     maximum = maximum + max1
     print("MFV SPO count", max1, ", UV count:", len(np.unique(x)),
-          ", MFV occurs:", math.ceil((max1 * 100 / len(x))), "%"
-          ", Unique SPO:",math.ceil((len(np.unique(x))*100/len(x))),"%")
+          ", MFV occurs:", "%.2f" % float((max1 * 100 / len(x))), "%"
+          ", Unique SPO:","%.2f" % float((len(np.unique(x))*100/len(x))),"%")
 
     y2 = np.bincount(r)
     max1 = max(y2)
@@ -554,8 +553,8 @@ def generate_index_bitmaps(tab_spo, tab_pos, tab_osp, n_dict_elm):
     #        print("POS MFV ID:", i, end=", ")
     maximum = maximum + max1
     print("MFV POS count", max1, ", UV count:", len(np.unique(r)),
-          ", MFV occurs:", math.ceil((max1 * 100 / len(r))), "%"
-          ", Unique POS:",math.ceil((len(np.unique(r))*100/len(r))), "%")
+          ", MFV occurs:", "%.2f" % float((max1 * 100 / len(r))), "%"
+          ", Unique POS:","%.2f" % float((len(np.unique(r))*100/len(r))), "%")
 
     y3 = np.bincount(z)
     max1 = max(y3)
@@ -564,8 +563,8 @@ def generate_index_bitmaps(tab_spo, tab_pos, tab_osp, n_dict_elm):
     #        print("OSP MFV ID:", i, end=", ")
     maximum = maximum + max1
     print("MFV OSP count", max1, ", UV count:", len(np.unique(z)),
-          ", MFV occurs:", math.ceil((max1 * 100 / len(z))), "%"
-          ", Unique OSP:",math.ceil((len(np.unique(z))*100/len(z))), "%")
+          ", MFV occurs:", "%.2f" % float((max1 * 100 / len(z))), "%"
+          ", Unique OSP:","%.2f" % float((len(np.unique(z))*100/len(z))), "%")
     print("############################# Dataset Statistics ##################################")
 
     tab_spo = list(map(itemgetter(1, 2), tab_spo))
@@ -839,7 +838,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
             sub_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
                                        dic_srds, tmp_dic_srds)
             ls_out.append(sub_str)
-        #print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
         print("Total SPO retrieved:", len(ls_out))
 
     elif qr_type == "S?O":
@@ -851,7 +850,6 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                       dic_srds, tmp_dic_srds)
         s_idx, e_idx = get_range_using_bitmap_o(obj_id, dic_mid_addr,
                                                 dic_srds, tmp_dic_srds)
-        #print("s_idx, e_idx", s_idx, e_idx)
         prd_ids = get_ids_using_lookup_osp(s_idx, e_idx, sub_id,
                                            dic_mid_addr, dic_srds,
                                            elm_per_srd, tmp_dic_srds)
@@ -859,7 +857,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
             prd_str = map_id_to_rdf_string(sid, cnt_dic_srds, dic_mid_addr,
                                            dic_srds, tmp_dic_srds)
             ls_out.append(prd_str)
-        #print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
         print("Total SPO retrieved:", len(ls_out))
 
     elif qr_type == "SP?":
@@ -878,7 +876,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
             obj_str = map_id_to_rdf_string(oid, cnt_dic_srds, dic_mid_addr,
                                            dic_srds, tmp_dic_srds)
             ls_out.append(obj_str)
-        #print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
         print("Total SPO retrieved:", len(ls_out))
 
     elif qr_type == "??O":
@@ -897,7 +895,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
             prd_str = map_id_to_rdf_string(pid, cnt_dic_srds, dic_mid_addr,
                                            dic_srds, tmp_dic_srds)
             ls_out.append((sub_str, prd_str))
-        #print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
         print("Total SPO retrieved:", len(ls_out))
 
     elif qr_type == "?P?":
@@ -917,7 +915,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
             obj_str = map_id_to_rdf_string(oid, cnt_dic_srds, dic_mid_addr,
                                            dic_srds, tmp_dic_srds)
             ls_out.append((sub_str, obj_str))
-        #print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
         print("Total SPO retrieved:", len(ls_out))
 
     elif qr_type == "S??":
@@ -937,7 +935,7 @@ def map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
             obj_str = map_id_to_rdf_string(oid, cnt_dic_srds, dic_mid_addr,
                                            dic_srds, tmp_dic_srds)
             ls_out.append((prd_str, obj_str))
-        #print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
+        print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds)
         print("Total SPO retrieved:", len(ls_out))
 
 
@@ -947,32 +945,32 @@ def print_output(qr_type, sub_str, prd_str, obj_str, ls_out, tmp_dic_srds):
     print("Total SPO retrieved ............:", len(ls_out))
     #for idx, str_idx in enumerate(tmp_dic_srds):
     #    print("Strand", idx + 1, tmp_dic_srds[str_idx])
-    if qr_type == "?PO":
-        #print("(Subject)", ls_out)
-        for out in ls_out:
-            print("SPO:", out, prd_str, obj_str)
-    elif qr_type == "S?O":
-        #print("(Predicate):", ls_out)
-        for out in ls_out:
-            print("SPO:", sub_str, out, obj_str)
-    elif qr_type == "SP?":
-        #print("(Object):", ls_out)
-        for out in ls_out:
-            print("SPO:", sub_str, prd_str, out)
-    elif qr_type == "??O":
-        #print("(Subject, Predicate):", ls_out)
-        for (sub_str, prd_str) in ls_out:
-            print("SPO:", sub_str, prd_str, obj_str)
-    elif qr_type == "?P?":
-        #print("(Subject, Object):", ls_out)
-        for (sub_str, obj_str) in ls_out:
-            print("SPO:", sub_str, prd_str, obj_str)
-    elif qr_type == "S??":
-        #print("(Predicate, Object):", ls_out)
-        for (prd_str, obj_str) in ls_out:
-            print("SPO:", sub_str, prd_str, obj_str)
-    else:
-        print("Ah!.........No Query Pattern Matched!......")
+    #if qr_type == "?PO":
+    #    print("(Subject)", ls_out)
+    #    for out in ls_out:
+    #        print("SPO:", out, prd_str, obj_str)
+    #elif qr_type == "S?O":
+    #    print("(Predicate):", ls_out)
+    #    for out in ls_out:
+    #        print("SPO:", sub_str, out, obj_str)
+    #elif qr_type == "SP?":
+    #    print("(Object):", ls_out)
+    #    for out in ls_out:
+    #        print("SPO:", sub_str, prd_str, out)
+    #elif qr_type == "??O":
+    #    print("(Subject, Predicate):", ls_out)
+    #    for (sub_str, prd_str) in ls_out:
+    #        print("SPO:", sub_str, prd_str, obj_str)
+    #elif qr_type == "?P?":
+    #    print("(Subject, Object):", ls_out)
+    #    for (sub_str, obj_str) in ls_out:
+    #        print("SPO:", sub_str, prd_str, obj_str)
+    #elif qr_type == "S??":
+    #   print("(Predicate, Object):", ls_out)
+    #    for (prd_str, obj_str) in ls_out:
+    #        print("SPO:", sub_str, prd_str, obj_str)
+    #else:
+    #    print("Ah!.........No Query Pattern Matched!......")
 
 
 def create_rdf_triple_table():
@@ -1024,87 +1022,13 @@ def create_rdf_triple_table():
     col_names = ["Subject", "Property", "Object"]
 
     # display table
-    print(tabulate(data, headers=col_names))
+    #print(tabulate(data, headers=col_names))
     return data
 
 
 def create_rdf_triple_empty_table():
     # create data
     data = []
-    # define header names
-    col_names = ["Subject", "Property", "Object"]
-
-    # display table
-    print(tabulate(data, headers=col_names))
-    return data
-
-def create_rdf_triple_table2():
-    # create data
-    data = [['<http://orcid.org/0000-0002-3178-0201>', 'dcterm:created', '2014-12-22T22:25:56.900Z^^xsd:dateTime'],
-            ['<http://orcid.org/0000-0002-3178-0201>', '<http://www.loc.gov/mads/rdf/v1#hasAffiliation>', '<http://www.grid.ac/institutes/grid.152326.1>'],
-            ['<http://orcid.org/0000-0002-3178-0201>', 'rdf:type', 'foaf:Person'],
-            ['<http://orcid.org/0000-0002-3178-0201>', 'rdfs:label', 'Julian Hillyer'],
-            ['<http://orcid.org/0000-0002-3178-0201>', 'foaf:familyName', 'Hillyer'],
-            ['<http://orcid.org/0000-0002-3178-0201>', 'foaf:givenName', 'Julian'],
-            ['<http://orcid.org/0000-0002-3178-0201>', 'dcterm:modified', '2017-08-11T21:51:34.631Z^^xsd:dateTime'],
-            ['<http://orcid.org/0000-0003-2360-0589>', 'dcterm:created', '2017-05-24T13:47:09.768Z^^xsd:dateTime'],
-            ['<http://orcid.org/0000-0003-2360-0589>', '<http://www.loc.gov/mads/rdf/v1#hasAffiliation>', '<http://www.grid.ac/institutes/grid.152326.1>'],
-            ['<http://orcid.org/0000-0003-2360-0589>', 'rdf:type', 'foaf:Person'],
-            ['<http://orcid.org/0000-0003-2360-0589>', 'rdfs:label', 'Shaul Kelner'],
-            ['<http://orcid.org/0000-0003-2360-0589>', 'foaf:familyName', 'Kelner'],
-            ['<http://orcid.org/0000-0003-2360-0589>', 'foaf:givenName', 'Shaul'],
-            ['<http://orcid.org/0000-0003-2360-0589>', 'dcterm:modified', '2017-05-24T13:56:27.187Z^^xsd:dateTime'],
-            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'dcterm:creator', '<http://orcid.org/0000-0003-2360-0589>'],
-            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'dcterm:date', '2015-12-30'],
-            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', '<http://purl.org/ontology/bibo/pageEnd>', '4'],
-            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', '<http://purl.org/ontology/bibo/pageStart>', '1'],
-            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'rdf:type', 'foaf:Document'],
-            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'rdfs:label', 'Jews in the United States@en'],
-            ['<http://dx.doi.org/10.1002/9781118663202.wberen606>', 'dcterm:title', 'Jews in the United States@en'],
-            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'dcterm:creator', '<http://orcid.org/0000-0002-3178-0201>'],
-            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'dcterm:date', '2016-05'],
-            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', '<http://purl.org/ontology/bibo/pageEnd>', '118'],
-            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', '<http://purl.org/ontology/bibo/pageStart>', '102'],
-            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', '<http://purl.org/ontology/bibo/volume>', '58'],
-            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'rdf:type', 'foaf:Document'],
-            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'rdfs:label', 'Insect immunology and hematopoiesis@en'],
-            ['<http://dx.doi.org/10.1016/j.dci.2015.12.006>', 'dcterm:title', 'Insect immunology and hematopoiesis@en'],
-            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', 'dcterm:creator', '<http://orcid.org/0000-0002-3178-0201>'],
-            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', 'dcterm:date', '2017-08'],
-            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', '<http://purl.org/ontology/bibo/pageEnd>', '56'],
-            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', '<http://purl.org/ontology/bibo/pageStart>', '47'],
-            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', '<http://purl.org/ontology/bibo/volume>', '101'],
-            ['<http://dx.doi.org/10.1016/j.jinsphys.2017.06.013>', 'rdf:type', 'foaf:Document'],
-            ['<http://dx.doi.org/10.1177/1536504211418463>', 'dcterm:creator', '<http://orcid.org/0000-0003-2360-0589>'],
-            ['<http://dx.doi.org/10.1177/1536504211418463>', 'dcterm:date', '2011-08'],
-            ['<http://dx.doi.org/10.1177/1536504211418463>', '<http://purl.org/ontology/bibo/pageEnd>', '73'],
-            ['<http://dx.doi.org/10.1177/1536504211418463>', '<http://purl.org/ontology/bibo/pageStart>', '72'],
-            ['<http://dx.doi.org/10.1177/1536504211418463>', '<http://purl.org/ontology/bibo/volume>', '10'],
-            ['<http://dx.doi.org/10.1177/1536504211418463>', 'rdf:type', 'foaf:Document'],
-            ['<http://dx.doi.org/10.1177/1536504211418463>', 'rdfs:label', 'Let My People Go@en'],
-            ['<http://dx.doi.org/10.1177/1536504211418463>', 'dcterm:title', 'Let My People Go@en'],
-            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'dcterm:creator', '<http://orcid.org/0000-0003-2360-0589>'],
-            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'dcterm:date', '2014'],
-            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', '<http://purl.org/ontology/bibo/pageEnd>', '22'],
-            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', '<http://purl.org/ontology/bibo/pageStart>', '17'],
-            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', '<http://purl.org/ontology/bibo/volume>', '98'],
-            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'rdf:type', 'foaf:Document'],
-            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'rdfs:label', 'Ethnographers and History@en'],
-            ['<http://dx.doi.org/10.1353/ajh.2014.0012>', 'dcterm:title', 'Ethnographers and History@en'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.w3.org/2003/01/geo/wgs84_pos#lat>', '36.144937^^xsd:float'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.w3.org/2003/01/geo/wgs84_pos#long>', '-86.802687^^xsd:float'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/cityName>', 'Nashville'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/countryCode>', 'US'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/countryName>', 'United States'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/establishedYear>', '1873^^xsd:gYear'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/hasWikidataId>', '<http://www.wikidata.org/entity/Q29052>'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', '<http://www.grid.ac/ontology/wikipediaPage>', '<http://en.wikipedia.org/wiki/Vanderbilt_University>'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', 'rdf:type', '<http://www.grid.ac/ontology/Education>'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', 'rdf:type', 'foaf:Organization'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', 'rdfs:label', 'Vanderbilt University'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', 'foaf:homepage', '<http://www.vanderbilt.edu/>'],
-            ['<http://www.grid.ac/institutes/grid.152326.1>', 'skos:altLabel', 'Vandy']
-            ]
     # define header names
     col_names = ["Subject", "Property", "Object"]
 
@@ -1135,39 +1059,50 @@ if __name__ == '__main__':
     global seq_trns
     seq_trns = 0
     print("\nCreating tuples from RDF triple table....\n")
-    #dt_tpl = create_rdf_triple_table()
-    #dt_tpl2 = create_rdf_triple_table2()
-    #dt_tpl.extend(dt_tpl2)
-    dt_tpl = create_rdf_triple_empty_table()
+    dt_tpl = create_rdf_triple_table()
+    #dt_tpl = create_rdf_triple_empty_table()
 
     print("\nLoading graph data......................\n")
 
-    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset1\\"
-    #fileName = "rismAuthoritiesRDF_D9.txt"
+    # recommended
+    filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\3.RismCatalogDataset\\dataset9\\"
+    fileName = "rismAuthoritiesRDF.txt"
 
-    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset22-British\\dataset8_ok\\"
+    # recommended
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\2.BrithishLibraryDataset\\dataset8\\"
     #fileName = "BNBLODC_sample.txt"
 
-    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset22-British\\dataset7_ok\\"
-    #fileName = "BLICBasicBooks_sample.txt"
-
-    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset22-British\\dataset6_ok\\"
+    # recommended
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\2.BrithishLibraryDataset\\dataset7\\"
     #fileName = "BNBLODS_sample.txt"
 
-    filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset22-British\\dataset5_ok\\"
-    fileName = "knowledge-organizations_202307.txt"
+    # recommended
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\2.BrithishLibraryDataset\\dataset6\\"
+    #fileName = "BLICBasicBooks_sample.txt"
 
-    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset11-Yago\\dataset5_ok\\"
-    #fileName = "yagoWordnetDomains.txt"
+    # recommended
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\2.BrithishLibraryDataset\\dataset5\\"
+    #fileName = "knowledge-organizations_202307.txt"
 
-    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset11-Yago\\dataset4_ok\\"
-    #fileName = "yagoWordnetIds.txt"
+    # recommended
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\1.BooksDataset\dataset4\\"
+    #fileName = "books.txt"
 
-    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\testDataset11-Yago\\dataset2_ok\\"
-    #fileName = "yagoGeonamesGlosses.txt"
+    # recommended
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\1.BooksDataset\dataset3\\"
+    #fileName = "films.txt"
+
+    # recommended
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\1.BooksDataset\dataset2\\"
+    #fileName = "authors.txt"
+
+    # recommended
+    #filePath = "C:\\Users\\admin\\Desktop\\DAAD2024\\testRDF\\AllDatasets\\1.BooksDataset\dataset1\\"
+    #fileName = "MusicArtist.txt"
 
     #fileWrite(filePath, fileName, ".ttl")
     #exit()
+
     with open(filePath + fileName, 'r', encoding="utf-8") as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=' ')
         tmp_row = []
@@ -1213,14 +1148,14 @@ if __name__ == '__main__':
                     if maxLen < len(row[2]):
                         maxLen = len(row[2])
 
-    print("location:", location)
-    print("value:", value)
-    print("name:", name)
-    print("alternateName:", alternateName)
-    print("postalCode:", postalCode)
-    print("addressLocality:", addressLocality)
-    print("addressRegion:", addressRegion)
-    print("streetAddress:", streetAddress)
+    #print("location:", location)
+    #print("value:", value)
+    #print("name:", name)
+    #print("alternateName:", alternateName)
+    #print("postalCode:", postalCode)
+    #print("addressLocality:", addressLocality)
+    #print("addressRegion:", addressRegion)
+    #print("streetAddress:", streetAddress)
     t_dic, t_rdf = \
         convert_id_based_triple_storage(dt_tpl)
 
@@ -1243,14 +1178,15 @@ if __name__ == '__main__':
     qry_cnt = 0
     max_runs = 0
     seq_runs = 0
+    qry_tim = 2
     cnt_strs= len(dic_srds)
 
     tmp_dic_srds: dict[Any, Any] = {}
     dup_dic_srds: dict[Any, Any] = {}
 
-    qr_type = "?P?"
-    sub_str = None
-    prd_str = "<http://schema.org/name>"
+    qr_type = "S??"
+    sub_str = "<http://data.rism.info/id/rismauthorities/ks40005471>"
+    prd_str = None
     obj_str = None
     tmp_dic_srds.clear()
     map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
@@ -1275,9 +1211,90 @@ if __name__ == '__main__':
     tmp_cnt = 0
     seq_trns = 0
 
-    qr_type = "?P?"
+    qr_type = "??O"
     sub_str = None
-    prd_str = "<http://schema.org/value>"
+    prd_str = None
+    obj_str = "30073484"
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                t_dic,
+                                tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
+    qry_cnt = qry_cnt + 1
+    print("Query I/O retrieved in percentage:", "%.2f" % ((tmp_cnt / cnt_strs) * 100), "%")
+    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
+    if max_runs < seq_trns:
+        max_runs = seq_trns
+    seq_runs = seq_runs + seq_trns
+    tmp_cnt = 0
+    seq_trns = 0
+
+    qr_type = "??O"
+    sub_str = None
+    prd_str = None
+    obj_str = "Maximilians-Museum"
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                t_dic,
+                                tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
+    qry_cnt = qry_cnt + 1
+    print("Query I/O retrieved in percentage:", "%.2f" % ((tmp_cnt / cnt_strs) * 100), "%")
+    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
+    if max_runs < seq_trns:
+        max_runs = seq_trns
+    seq_runs = seq_runs + seq_trns
+    tmp_cnt = 0
+    seq_trns = 0
+
+    qr_type = "S?O"
+    sub_str = "<http://data.rism.info/id/rismauthorities/pe30109359>"
+    prd_str = None
+    obj_str = "Scholar"
+    tmp_dic_srds.clear()
+    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
+                                cnt_dic_srds,
+                                dic_srds,
+                                dic_mid_addr,
+                                t_dic,
+                                tmp_dic_srds)
+    dup_dic_srds.update(tmp_dic_srds)
+    tmp_cnt = len(tmp_dic_srds)
+    if tmp_cnt > max_srds:
+        max_srds = tmp_cnt
+    if tmp_cnt < min_srds:
+        min_srds = tmp_cnt
+    sum_srds = sum_srds + tmp_cnt
+    qry_cnt = qry_cnt + 1
+    print("Query I/O retrieved in percentage:", "%.2f" % ((tmp_cnt / cnt_strs) * 100), "%")
+    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
+    if max_runs < seq_trns:
+        max_runs = seq_trns
+    seq_runs = seq_runs + seq_trns
+    tmp_cnt = 0
+    seq_trns = 0
+
+    qr_type = "SP?"
+    sub_str = "<http://data.rism.info/id/rismauthorities/lit1403>"
+    prd_str = "<http://purl.org/ontology/bibo/pages>"
     obj_str = None
     tmp_dic_srds.clear()
     map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
@@ -1302,10 +1319,10 @@ if __name__ == '__main__':
     tmp_cnt = 0
     seq_trns = 0
 
-    qr_type = "?P?"
-    sub_str = None
-    prd_str = "<http://schema.org/alternateName>"
-    obj_str = None
+    qr_type = "S?O"
+    sub_str = "<http://data.rism.info/id/rismauthorities/pe41011154>"
+    prd_str = None
+    obj_str = "Librarian"
     tmp_dic_srds.clear()
     map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
                                 cnt_dic_srds,
@@ -1329,119 +1346,11 @@ if __name__ == '__main__':
     tmp_cnt = 0
     seq_trns = 0
 
-    qr_type = "?P?"
-    sub_str = None
-    prd_str = "<http://schema.org/postalCode>"
-    obj_str = None
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    dup_dic_srds.update(tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    sum_srds = sum_srds + tmp_cnt
-    qry_cnt = qry_cnt + 1
-    print("Query I/O retrieved in percentage:", "%.2f" % ((tmp_cnt / cnt_strs) * 100), "%")
-    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
-    if max_runs < seq_trns:
-        max_runs = seq_trns
-    seq_runs = seq_runs + seq_trns
-    tmp_cnt = 0
-    seq_trns = 0
-
-    qr_type = "?P?"
-    sub_str = None
-    prd_str = "<http://schema.org/addressLocality>"
-    obj_str = None
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    dup_dic_srds.update(tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    sum_srds = sum_srds + tmp_cnt
-    qry_cnt = qry_cnt + 1
-    print("Query I/O retrieved in percentage:", "%.2f" % ((tmp_cnt / cnt_strs) * 100), "%")
-    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
-    if max_runs < seq_trns:
-        max_runs = seq_trns
-    seq_runs = seq_runs + seq_trns
-    tmp_cnt = 0
-    seq_trns = 0
-
-    qr_type = "?P?"
-    sub_str = None
-    prd_str = "<http://schema.org/addressRegion>"
-    obj_str = None
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    dup_dic_srds.update(tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    sum_srds = sum_srds + tmp_cnt
-    qry_cnt = qry_cnt + 1
-    print("Query I/O retrieved in percentage:", "%.2f" % ((tmp_cnt / cnt_strs) * 100), "%")
-    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
-    if max_runs < seq_trns:
-        max_runs = seq_trns
-    seq_runs = seq_runs + seq_trns
-    tmp_cnt = 0
-    seq_trns = 0
-
-    qr_type = "?P?"
-    sub_str = None
-    prd_str = "<http://schema.org/streetAddress>"
-    obj_str = None
-    tmp_dic_srds.clear()
-    map_rdf_sparql_query_to_dna(qr_type, sub_str, prd_str, obj_str,
-                                cnt_dic_srds,
-                                dic_srds,
-                                dic_mid_addr,
-                                t_dic,
-                                tmp_dic_srds)
-    dup_dic_srds.update(tmp_dic_srds)
-    tmp_cnt = len(tmp_dic_srds)
-    if tmp_cnt > max_srds:
-        max_srds = tmp_cnt
-    if tmp_cnt < min_srds:
-        min_srds = tmp_cnt
-    sum_srds = sum_srds + tmp_cnt
-    qry_cnt = qry_cnt + 1
-    print("Query I/O retrieved in percentage:", "%.2f" % ((tmp_cnt / cnt_strs) * 100), "%")
-    print("Total Sequencing runs:....................................: Runs#     =", seq_trns)
-    if max_runs < seq_trns:
-        max_runs = seq_trns
-    seq_runs = seq_runs + seq_trns
-    tmp_cnt = 0
-    seq_trns = 0
     print("\n############################ Processing Queries End ###############################\n")
     print("\n################################# OUTPUT Graph ####################################")
     tot_srds = len(dic_srds)
     avg_srds= int(sum_srds / qry_cnt)
     avg_runs = int(seq_runs / qry_cnt)
-
 
     pyl_data= byt_per_srd
     prm_data= (prm_size * prm_cnt) / 4
@@ -1459,6 +1368,8 @@ if __name__ == '__main__':
     pyl_size= float((pyl_data / str_data) * grp_size)
     prm_size= float((prm_data / str_data) * grp_size)
     ecc_size= float((ecc_data / str_data) * grp_size)
+
+    grp_runs= int((2+(grp_size / (1024 * 1024)))/qry_tim)
 
     print("The graph data file name .................................: GraphName =", fileName)
     print("Integer Size for the graph ...............................: IntegrSize=", int_size)
@@ -1483,14 +1394,19 @@ if __name__ == '__main__':
           "%.2f" % float((avg_srds / tot_srds) * 100), "%")
     print("Maximum I/O per query execution...........................: OutputData=",
           "%.2f" % float((max_srds / tot_srds) * 100), "%")
+    print("Total graph I/O time .....................................: GrphIOTime=",
+          grp_runs, "runs")
+    print("Average partial data I/O time ............................: QuryIOTime=",
+          "%.2f" % (avg_runs/grp_runs), "times")
     print("Total graph data size.....................................: TotGrpSize=",
-          "%.2f" % (grp_size / (1024 * 1024)), "GB")
+          "%.2f" % (grp_size / (1024 * 1024)), "MB")
     print("Total payload data size ..................................: TotPylSize=",
-          "%.2f" % (pyl_size / (1024*1024)), "GB")
+          "%.2f" % (pyl_size / (1024*1024)), "MB")
     print("Total primer data size per graph .........................: TotPrmSize=",
-          "%.2f" % (prm_size/ (1024*1024)), "GB")
+          "%.2f" % (prm_size/ (1024*1024)), "MB")
     print("Total error-correcting code data size per graph ..........: TotECCSize=",
-          "%.2f" % (ecc_size / (1024 * 1024)), "GB")
+          "%.2f" % (ecc_size / (1024 * 1024)), "MB")
+    print("Total data size in bytes .................................:  GraphSize=", grp_size, "B")
     print("Per strand total data ....................................: StrandSize=", str_data, "B")
     print("Per strand payload data ..................................: PaylodSize=", pyl_data, "B")
     print("Per strand primer data size...............................: PrimerSize=", prm_data, "B")
@@ -1504,4 +1420,4 @@ if __name__ == '__main__':
     print("Error-correcting codes overhead in the graph..............: ECCOverhed=",
           "%.2f" % (ecc_ovh), "%")
 
-    print("\n################################# OUTPUT Graph ####################################")
+    print("\n################################# OUTPUT Graph ####################################
